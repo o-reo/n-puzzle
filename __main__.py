@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from parser import Parser
-from exception import *
+from npuzzle import Parser, BadInput, EmptyFile
 
 if __name__ == "__main__":
     parser = Parser()

@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
-from .solver import Solver
+from .exception import *
 from .parser import Parser
+from .solver import Solver

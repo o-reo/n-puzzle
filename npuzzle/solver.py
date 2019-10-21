@@ -3,7 +3,7 @@
 import sys
 import os
 
-import parser
+from .parser import Parser
 
 class Solver():
     def __init__(self, parser):

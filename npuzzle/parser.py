@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from exception import *
+from .exception import *
 
 def is_int(line):
     for char in line:
