@@ -8,6 +8,7 @@ sys.path.append(PY_DIR)
 
 class Parser():
     def __init__(self):
+        self.status = False
         pass
 
     def push(self, input_line):

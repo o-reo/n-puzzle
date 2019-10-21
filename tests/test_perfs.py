@@ -12,24 +12,40 @@ from solver.solver import Solver
 
 class TestPerformance(unittest.TestCase):
 
+    def test_parsing_ko(self):
+        for i in range(1, 6):
+            with open('tests/puzzles/ko_{}.puz'.format(i)) as input_file:
+                parse = Parser()
+                while parse.push(input_file.readline()):
+                    pass
+                self.assertFalse(parse.status)
+
+    def test_parsing_ok(self):
+        for i in range(1, 6):
+            with open('tests/puzzles/ok_{}.puz'.format(i)) as input_file:
+                parse = Parser()
+                while parse.push(input_file.readline()):
+                    pass
+                self.assertTrue(parse.status)
+
     def test_solvable(self):
         for i in range(1, 6):
-            with open('tests/puzzles/{}.puz'.format(i)) as input_file:
-                puz = Parser()
-                while puz.push(input_file.readline()):
+            with open('tests/puzzles/s_{}.puz'.format(i)) as input_file:
+                parse = Parser()
+                while parse.push(input_file.readline()):
                     pass
                 solver = Solver(None)
-                is_solved = solver.solve(puz)
+                is_solved = solver.solve(parse)
                 self.assertTrue(is_solved and solver.n_moves < 155)
 
     def test_unsolvable(self):
         for i in range(1, 6):
             with open('tests/puzzles/u_{}.puz'.format(i)) as input_file:
-                puz = Parser()
-                while puz.push(input_file.readline()):
+                parse = Parser()
+                while parse.push(input_file.readline()):
                     pass
                 solver = Solver(None)
-                is_solved = solver.solve(puz)
+                is_solved = solver.solve(parse)
                 self.assertFalse(is_solved)
 
 if __name__ == '__main__':
