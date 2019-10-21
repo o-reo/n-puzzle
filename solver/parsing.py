@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys, os
+
+PY_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(PY_DIR)
+
 def is_int(line):
     for char in line:
         if char not in "0123456789":
@@ -20,12 +25,6 @@ class NotIntegerFound(Exception):
     pass
 
 class WrongNumberOfInteger(Exception):
-    pass
-
-class DuplicatesFound(Exception):
-    pass
-
-class WrongIntegerList(Exception):
     pass
 
 class Parser:
@@ -48,7 +47,7 @@ class Parser:
             if not is_int(integer):
                 raise NotIntegerFound
             else:
-                self.array.append(int(integer))
+                self.array.append(integer)
                 nbr_integer += 1
         if (nbr_integer != self.size):
             raise WrongNumberOfInteger
@@ -57,21 +56,12 @@ class Parser:
     def push(self, line, end = False):
         line = line.split('#')[0]
         if end:
-            check = list(self.array)
-            check.sort()
             if self.size == -1:
                 raise SizeNotFound
             if self.size < 3:
                 raise SizeTooSmall
             if self.size != self.nbr_line:
                 raise BadInput
-            for index in range(len(check[1:])):
-                if check[index + 1] == check[index]:
-                    raise DuplicatesFound
-                if check[index + 1] != check[index] + 1:
-                    raise WrongIntegerList
-            return
-
         if self.size == -1:
             self.get_size(line)
         else:
@@ -90,7 +80,6 @@ if __name__ == "__main__":
             try:
                 line = input()
             except EOFError:
-                parser.push("", True)
                 break
             raise BadInput
     print("puzzle : ", parser.array)
