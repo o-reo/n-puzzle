@@ -7,6 +7,7 @@ from exception import *
 if __name__ == "__main__":
     parser = Parser()
     end = False
+    line = None
     while (True):
         try:
             line = input()

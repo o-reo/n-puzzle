@@ -20,6 +20,7 @@ class TestParsing(unittest.TestCase):
                 except:
                     self.assertTrue(True)
                 else:
+                    print(i)
                     self.assertTrue(False)
 
     def test_parsing_ok(self):

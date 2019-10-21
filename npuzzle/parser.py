@@ -38,6 +38,8 @@ class Parser:
         self.nbr_line += 1
 
     def push(self, line, end = False):
+        if not line:
+            raise EmptyFile
         line = line.split('#')[0]
         if end:
             if self.size == -1:

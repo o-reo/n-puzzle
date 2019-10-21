@@ -4,6 +4,9 @@
 class SizeNotFound(Exception):
     pass
 
+class EmptyFile(Exception):
+    pass
+
 class SizeTooSmall(Exception):
     pass
 
