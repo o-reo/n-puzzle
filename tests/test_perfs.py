@@ -1,25 +1,36 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+import sys
+import os
 import unittest
-from solver import Parser
+
+PY_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(PY_DIR)
+
+from solver.parser import Parser
+from solver.solver import Solver
 
 class TestPerformance(unittest.TestCase):
 
     def test_solvable(self):
         for i in range(1, 6):
-            with open('puzzles/{}.puz'.format(i)) as file:
-                puz = file.read()
-                puz = Parser('puzzles/1.puz')
-                is_solved = puz.solve()
-                self.assertTrue(is_solved and puz.n_moves < 155)
+            with open('tests/puzzles/{}.puz'.format(i)) as input_file:
+                puz = Parser()
+                while puz.push(input_file.readline()):
+                    pass
+                solver = Solver(None)
+                is_solved = solver.solve(puz)
+                self.assertTrue(is_solved and solver.n_moves < 155)
 
     def test_unsolvable(self):
         for i in range(1, 6):
-            with open('puzzles/{}.puz'.format(i)) as file:
-                puz = file.read()
-                puz = Parser('puzzles/1.puz')
-                self.assertFalse(puz.solve())
+            with open('tests/puzzles/u_{}.puz'.format(i)) as input_file:
+                puz = Parser()
+                while puz.push(input_file.readline()):
+                    pass
+                solver = Solver(None)
+                is_solved = solver.solve(puz)
+                self.assertFalse(is_solved)
 
 if __name__ == '__main__':
     unittest.main()
