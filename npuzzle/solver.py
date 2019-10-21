@@ -3,10 +3,7 @@
 import sys
 import os
 
-PY_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.append(PY_DIR)
-
-from parser import Parser
+import parser
 
 class Solver():
     def __init__(self, parser):

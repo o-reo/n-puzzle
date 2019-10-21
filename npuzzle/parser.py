@@ -3,9 +3,6 @@
 import sys
 import os
 
-PY_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.append(PY_DIR)
-
 class Parser():
     def __init__(self):
         self.status = False
