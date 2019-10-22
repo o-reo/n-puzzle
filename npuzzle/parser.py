@@ -54,5 +54,7 @@ class Parser:
         sorted_arr.sort()
         if sorted_arr != check:
             raise WrongNumbering
-        # self.puzzle = np.array(self.array).reshape(self.size, self.size)
         return self.array
+    
+    def numpize(self):
+        return np.array(self.array).reshape(self.size, self.size)
