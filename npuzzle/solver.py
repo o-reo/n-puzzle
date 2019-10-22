@@ -4,6 +4,7 @@ import sys
 import os
 import numpy as np
 from math import sqrt
+import heapq
 
 from .parser import Parser
 
@@ -64,7 +65,7 @@ class Solver():
             for x in range(coords[1] + direction, target[1] + direction):
                 if array[coords[0], x] != 0 and self._target(array[coords[0], x])[0] == target[0]:
                     add = 1
-        if coords[1] == target[1]:
+        elif coords[1] == target[1]:
             direction = 2 * (target[1] > coords[1]) - 1
             for x in range(coords[0] + direction, target[0]):
                 if array[x, coords[1]] != 0 and self._target(array[x, coords[1]])[1] == target[1]:
