@@ -4,7 +4,7 @@
 class SizeNotFound(Exception):
     pass
 
-class EmptyFile(Exception):
+class EmptyLine(Exception):
     pass
 
 class SizeTooSmall(Exception):
@@ -13,17 +13,14 @@ class SizeTooSmall(Exception):
 class BadInput(Exception):
     pass
 
-class NotIntegerFound(Exception):
+class NotAnInteger(Exception):
     pass
 
-class WrongNumberOfInteger(Exception):
+class WrongColumnCount(Exception):
     pass
 
-class DuplicatesFound(Exception):
+class WrongNumbering(Exception):
     pass
 
-class WrongIntegerList(Exception):
-    pass
-
-class ZeroNotFound(Exception):
+class WrongLineCount(Exception):
     pass
