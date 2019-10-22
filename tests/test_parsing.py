@@ -9,32 +9,38 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from npuzzle import *
 
 def try_error(file_name, error_code):
+    parser = Parser()
     with open(file_name) as input_file:
-        parse = Parser()
         try:
-            line = input_file.readline()
-            while line:
-                parse.push(line)
-                line = input_file.readline()
-            parse.build()
+            lines = input_file.readlines()
+            if not len(lines):
+                parser.push("")
+            for line in lines:
+                parser.push(line)
         except error_code:
             return True
-        else:
+        except:
             return False
+        try:
+            parser.build()
+        except error_code:
+            return True
+        except Exception as e:
+            return False
+        return False
 
 def try_ok(file_name):
+    parser = Parser()
     with open(file_name) as input_file:
-        parse = Parser()
-        line = input_file.readline()
-        while line:
-            parse.push(line)
-            line = input_file.readline()
-        return parse.build()
+        lines = input_file.readlines()
+        for line in lines:
+            parser.push(line)
+        return parser.build()
 
 class TestParsing(unittest.TestCase):
 
     def test_parsing_empty(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_0.puz'), SizeNotFound)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_0.puz'), EmptyLine)
         self.assertTrue(res)
 
     def test_parsing_nosize(self):
@@ -58,7 +64,7 @@ class TestParsing(unittest.TestCase):
         self.assertTrue(res)
 
     def test_parsing_nosize3(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_6.puz'), SizeNotFound)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_6.puz'), NotAnInteger)
         self.assertTrue(res)
 
     def test_parsing_toosmall2(self):

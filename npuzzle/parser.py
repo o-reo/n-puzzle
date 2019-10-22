@@ -11,7 +11,7 @@ class Parser:
 
     def get_size(self, line):
         if len(line.split()) != 1:
-            raise WrongColumnCount
+            raise SizeNotFound
         if line.isdigit():
             self.size = int(line)
         else:
@@ -31,6 +31,7 @@ class Parser:
     def push(self, line):
         if not line:
             raise EmptyLine
+        line = line.strip()
         line = line.split('#')[0]
         # this line is a comment or is empty
         if not line:
