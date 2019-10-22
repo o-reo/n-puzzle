@@ -60,4 +60,4 @@ class Parser:
             self.get_puzzle(line)
 
     def build(self):
-        pass
+        return self.array
