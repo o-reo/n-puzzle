@@ -58,3 +58,6 @@ class Parser:
             self.get_size(line)
         else:
             self.get_puzzle(line)
+
+    def build(self):
+        pass
