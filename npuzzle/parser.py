@@ -3,61 +3,55 @@
 
 from .exception import *
 
-def is_int(line):
-    for char in line:
-        if char not in "0123456789":
-            return 0
-    return 1
-
 class Parser:
 
     def __init__(self):
         self.size = -1
-        self.nbr_line = 0
         self.array = []
 
     def get_size(self, line):
-        if (len(line) and is_int(line)):
+        if len(line.split()) != 1:
+            raise WrongColumnCount
+        if line.isdigit():
             self.size = int(line)
+        else:
+            raise NotAnInteger
 
     def get_puzzle(self, line):
         nbr_integer = 0
         integers = line.split()
         if len(integers) != self.size:
-            raise BadInput 
-        if integers[0]:
-            raise ZeroNotFound
+            raise WrongColumnCount
         for integer in integers:
-            if not is_int(integer):
-                raise NotIntegerFound
+            if not integer.isdigit():
+                raise NotAnInteger
             else:
-                self.array.append(integer)
-                nbr_integer += 1
-        if (nbr_integer != self.size):
-            raise WrongNumberOfInteger
-        self.nbr_line += 1
+                self.array.append(int(integer))
 
-    def push(self, line, end = False):
+    def push(self, line):
         if not line:
-            raise EmptyFile
+            raise EmptyLine
         line = line.split('#')[0]
-        if end:
-            if self.size == -1:
-                raise SizeNotFound
-            if self.size < 3:
-                raise SizeTooSmall
-            if self.size != self.nbr_line:
-                raise BadInput
-            for index in range(len(check[1:])):
-                if check[index + 1] == check[index]:
-                    raise DuplicatesFound
-                if check[index + 1] != check[index] + 1:
-                    raise WrongIntegerList
+        # this line is a comment or is empty
+        if not line:
             return
+        # size must be parsed
         if self.size == -1:
             self.get_size(line)
         else:
+            # parse a puzzle line
             self.get_puzzle(line)
 
     def build(self):
+        if self.size == -1:
+            raise SizeNotFound
+        if self.size < 3:
+            raise SizeTooSmall
+        if len(self.array) != self.size ** 2:
+            raise WrongLineCount
+        check = list(range(0, self.size ** 2))
+        sorted_arr = self.array.copy()
+        sorted_arr.sort()
+        if sorted_arr != check:
+            raise WrongNumbering
         return self.array

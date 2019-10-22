@@ -34,7 +34,7 @@ def try_ok(file_name):
 class TestParsing(unittest.TestCase):
 
     def test_parsing_empty(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_0.puz'), EmptyFile)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_0.puz'), SizeNotFound)
         self.assertTrue(res)
 
     def test_parsing_nosize(self):
@@ -50,11 +50,11 @@ class TestParsing(unittest.TestCase):
         self.assertTrue(res)
 
     def test_parsing_wrongcolumns(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_4.puz'), WrongNumberOfInteger)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_4.puz'), WrongColumnCount)
         self.assertTrue(res)
 
-    def test_parsing_wrongcolumns(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_5.puz'), DuplicatesFound)
+    def test_parsing_wrongcolumns2(self):
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_5.puz'), WrongNumbering)
         self.assertTrue(res)
 
     def test_parsing_nosize3(self):
@@ -66,23 +66,23 @@ class TestParsing(unittest.TestCase):
         self.assertTrue(res)
 
     def test_parsing_badinput(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_8.puz'), BadInput)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_8.puz'), WrongColumnCount)
         self.assertTrue(res)
 
     def test_parsing_badinput2(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_9.puz'), BadInput)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_9.puz'), WrongColumnCount)
         self.assertTrue(res)
 
     def test_parsing_notinteger(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_10.puz'), NotIntegerFound)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_10.puz'), NotAnInteger)
         self.assertTrue(res)
 
     def test_parsing_WrongIntegerList(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_11.puz'), WrongIntegerList)
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_11.puz'), WrongNumbering)
         self.assertTrue(res)
 
-    def test_parsing_NoZero(self):
-        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_12.puz'), ZeroNotFound)
+    def test_parsing_nozero(self):
+        res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/ko_12.puz'), WrongNumbering)
         self.assertTrue(res)
 
     def test_parsing_ok_1(self):
