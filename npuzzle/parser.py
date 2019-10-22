@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from .exception import *
+import numpy as np
 
 class Parser:
 
     def __init__(self):
         self.size = -1
+        self.puzzle = None
         self.array = []
 
     def get_size(self, line):
@@ -18,15 +20,12 @@ class Parser:
             raise NotAnInteger
 
     def get_puzzle(self, line):
-        nbr_integer = 0
-        integers = line.split()
+        integers = [int(integer) if integer.isdigit() else None for integer in line.split()]
+        if None in integers:
+            raise NotAnInteger
         if len(integers) != self.size:
             raise WrongColumnCount
-        for integer in integers:
-            if not integer.isdigit():
-                raise NotAnInteger
-            else:
-                self.array.append(int(integer))
+        self.array += integers
 
     def push(self, line):
         if not line:
@@ -55,4 +54,5 @@ class Parser:
         sorted_arr.sort()
         if sorted_arr != check:
             raise WrongNumbering
+        # self.puzzle = np.array(self.array).reshape(self.size, self.size)
         return self.array
