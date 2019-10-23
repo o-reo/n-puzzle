@@ -7,11 +7,20 @@ import time
 
 
 def get_args():
+
+    search = ["greedy", "uniform"]
+    heuristic = ["manhattan", "euclidian", "hamming", "linear_conflict"]
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--heuristic", "-H", type=str, help="heuristic to use", default="manhattan")
-    parser.add_argument("--search", "-s", type=str, help="heuristic to use", default="greedy")
-
-    return parser.parse_args()
+    parser.add_argument("--search", "-s", type=str, help="search to use", default="uniform")
+    args = parser.parse_args()
+    
+    if args.search not in search:
+        raise InvalidSearch 
+    if args.heuristic not in heuristic:
+        raise InvalidHeuristic
+    return args
 
 if __name__ == "__main__":
     b1 = time.time()
@@ -33,4 +42,3 @@ if __name__ == "__main__":
     print("nombre coups a faire : {}".format(len(a[0][1])))
     print("nombre etat ouvert en meme temps max : {}".format(a[1]))
     print("nombre etat ouvert : {}".format(a[2]))
-    print(a)

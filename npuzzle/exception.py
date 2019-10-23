@@ -30,3 +30,6 @@ class NotSolvable(Exception):
 
 class InvalidHeuristic(Exception):
     pass
+
+class InvalidSearch(Exception):
+    pass

@@ -5,6 +5,7 @@ import os
 import numpy as np
 from math import sqrt
 import heapq
+import asyncio
 
 from .exception import *
 from .parser import Parser
@@ -165,6 +166,22 @@ class Solver():
                                  wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
         return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
 
+    async def _slide(self, heap, func, node):
+        await 0 if heapq.heappush(heap, func(node)) else 0
+
+    async def _main(self, heap, node):
+            wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+            threads = []
+            if (wy > 0):
+                threads.append(self._slide(heap, self._slide_left, node))
+            if (wy < self._size - 1):
+                threads.append(self._slide(heap, self._slide_right, node))
+            if (wx > 0):
+                threads.append(self._slide(heap, self._slide_up, node))
+            if (wx < self._size - 1):
+                threads.append(self._slide(heap, self._slide_down, node))
+            await asyncio.wait(threads)
+
     def _astar(self, heap):
         max_state = 0
         while len(heap):
@@ -176,15 +193,8 @@ class Solver():
             self._closed_set.add(node[2].tostring())
             if a == len(self._closed_set):
                 continue
-            wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
-            if (wy > 0):
-                heapq.heappush(self._open_set, self._slide_left(node))
-            if (wy < self._size - 1):
-                heapq.heappush(self._open_set, self._slide_right(node))
-            if (wx > 0):
-                heapq.heappush(self._open_set, self._slide_up(node))
-            if (wx < self._size - 1):
-                heapq.heappush(self._open_set, self._slide_down(node))
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self._main(heap, node))
         else:
             raise NotSolvable 
 
