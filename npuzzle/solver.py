@@ -74,7 +74,7 @@ class Solver():
 
     def _manhattan(self, array, target, coords):
         return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
-     
+
     def _hamming(self, array, target, coords):
         return target != coords
 
@@ -110,9 +110,25 @@ class Solver():
     def _score_sum(self, array, method):
         return self._get_scores(array, method).sum()
 
+    def _slide_left(self, array):
+        pass
+    
+    def _slide_right(self, array):
+        pass
+    
+    def _slide_up(self, array):
+        pass
+
+    def _slide_down(self, array):
+        pass
+
+    def _slide(self, array, dir_func):
+        return dir_func(array)
+
     def solve(self, args):
         # open set is the heap of investigated states
-        heapq.heappush(self._open_set, (self.score_sum(self._manhattan), self._puzzle))
+        heapq.heappush(self._open_set, (self._score_sum(
+            self._manhattan), self._puzzle))
         # closed is a simple list
         #self._closed_set = []
         return False
