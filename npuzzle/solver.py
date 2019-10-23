@@ -18,45 +18,50 @@ class Solver():
             self._score_sum(self._puzzle, self._hamming)
             self._score_sum(self._puzzle, self._linear_conflict)
         """
-        self._puzzle = puzzle
+        self._puzzle = puzzle.copy()
+        self._size = puzzle.shape[0]
+        self._size2 = self._size ** 2
         # Compute desired state
-        self._solution = self._snail(puzzle.shape[0])
+        self._solution = self._snail()
         # Check if puzzle if solvable
-        self._solvable(puzzle.shape[0])
+        self._solvable()
         # open set is the heap of investigated states
         self._open_set = []
         # closed is a simple list
         self._closed_set = []
+        # placeholder
+        self._heuristic = self._hamming
 
-    def _solvable(self, size):
+    def _solvable(self):
+        puz_cpy = self._puzzle.copy()
         nbr_permutation = 0
-        for i in range(size ** 2):
+        for i in range(self._size2):
             wsx, wsy = map(lambda x: x[0], np.where(self._solution == i))
-            wpx, wpy = map(lambda x: x[0], np.where(self._puzzle == i))
+            wpx, wpy = map(lambda x: x[0], np.where(puz_cpy == i))
             if not i:
                 parity_zero = (abs(wsx - wpx) + abs(wsy - wpy)) % 2
             if (wsx == wpx and wsy == wpy):
                 continue
             else:
-                tmp = self._puzzle[wsx][wsy]
-                self._puzzle[wsx][wsy] = self._puzzle[wpx][wpy]
-                self._puzzle[wpx][wpy] = tmp
+                tmp = puz_cpy[wsx][wsy]
+                puz_cpy[wsx][wsy] = puz_cpy[wpx][wpy]
+                puz_cpy[wpx][wpy] = tmp
                 nbr_permutation += 1
         parity_permutation = nbr_permutation % 2
         if (parity_zero != parity_permutation):
             raise NotSolvable
 
-    def _snail(self, size):
+    def _snail(self):
         """
         Generate a snail matrix that is the desired solution
         """
-        snail = np.zeros((size, size))
+        snail = np.zeros((self._size, self._size))
         x, y = 0, 0
         dx, dy = 0, 1
-        for i in range(1, size ** 2):
+        for i in range(1, self._size2):
             snail[x, y] = i
             # rotate when out of bounds or already filled
-            if x + dx < 0 or x + dx >= size or y + dy < 0 or y + dy >= size or snail[x+dx, y+dy] != 0:
+            if x + dx < 0 or x + dx >= self._size or y + dy < 0 or y + dy >= self._size or snail[x+dx, y+dy] != 0:
                 dx, dy = dy, -dx
             x, y = x + dx, y + dy
         return snail
@@ -95,40 +100,64 @@ class Solver():
     # --
 
     def _get_scores(self, array, method):
-        size = array.shape[0]
-        scores = np.zeros(size ** 2)
-        for i in range(size ** 2):
-            x, y = int(i / size), i % size
+        scores = np.zeros(self._size2)
+        for i in range(self._size2):
+            x, y = int(i / self._size), i % self._size
             target_coords = self._target(array[x, y])
             if (array[x, y] != 0):
                 scores[i] = method(array, target_coords, (x, y))
         return scores
 
-    def _score_max(self, array, method):
-        return self._get_scores(array, method).max()
+    def _score_max(self, array):
+        return self._get_scores(array, self._heuristic).max()
 
-    def _score_sum(self, array, method):
-        return self._get_scores(array, method).sum()
+    def _score_sum(self, array):
+        return self._get_scores(array, self._heuristic).sum()
 
     def _slide_left(self, array):
-        pass
-    
+        """
+            return tuple (score, new_puzzle)
+        """
+        wx, wy = map(lambda x: x[0], np.where(array == 0))
+        new_arr = array.copy()
+        new_arr[wx, wy], new_arr[wx,
+                                 wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
+        return (self._score_sum(new_arr), new_arr)
+
     def _slide_right(self, array):
-        pass
-    
+        """
+            return tuple (score, new_puzzle)
+        """
+        wx, wy = map(lambda x: x[0], np.where(array == 0))
+        new_arr = array.copy()
+        new_arr[wx, wy], new_arr[wx,
+                                 wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
+        return (self._score_sum(new_arr), new_arr)
+
     def _slide_up(self, array):
-        pass
+        """
+            return tuple (score, new_puzzle)
+        """
+        wx, wy = map(lambda x: x[0], np.where(array == 0))
+        new_arr = array.copy()
+        new_arr[wx, wy], new_arr[wx - 1,
+                                 wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
+        return (self._score_sum(new_arr), new_arr)
 
     def _slide_down(self, array):
-        pass
-
-    def _slide(self, array, dir_func):
-        return dir_func(array)
+        """
+            return tuple (score, new_puzzle)
+        """
+        wx, wy = map(lambda x: x[0], np.where(array == 0))
+        new_arr = array.copy()
+        new_arr[wx, wy], new_arr[wx + 1,
+                                 wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
+        return (self._score_sum(new_arr), new_arr)
 
     def solve(self, args):
         # open set is the heap of investigated states
-        heapq.heappush(self._open_set, (self._score_sum(
-            self._manhattan), self._puzzle))
+        heapq.heappush(
+            self._open_set, (self._score_sum(self._puzzle), self._puzzle))
         # closed is a simple list
         #self._closed_set = []
         return False
