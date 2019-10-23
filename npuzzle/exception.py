@@ -10,9 +10,6 @@ class EmptyLine(Exception):
 class SizeTooSmall(Exception):
     pass
 
-class SizeTooBif(Exception):
-    pass
-
 class BadInput(Exception):
     pass
 
@@ -29,4 +26,7 @@ class WrongLineCount(Exception):
     pass
 
 class NotSolvable(Exception):
+    pass
+
+class InvalidHeuristic(Exception):
     pass

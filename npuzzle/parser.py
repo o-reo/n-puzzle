@@ -47,8 +47,6 @@ class Parser:
             raise SizeNotFound
         if self.size < 3:
             raise SizeTooSmall
-        if self.size > 16:
-            raise SizeTooBig
         if len(self.array) != self.size ** 2:
             raise WrongLineCount
         check = list(range(0, self.size ** 2))

@@ -25,6 +25,7 @@ class Solver():
         self._solution = self._snail()
         # Get heuristic
         self._heuristic = self._dispatch(args)
+        self._search = 0 if args.search == "greedy" else 1
         # open set is the heap of investigated states
         self._open_set = []
         # closed is a simple list
@@ -74,6 +75,7 @@ class Solver():
             return self._hamming
         if heuristic == "linear_conflict":
             return self._linear_conflict
+        raise InvalidHeuristic
 
     def _target(self, num_piece):
         """
@@ -131,7 +133,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
-        return (self._score_sum(new_arr), node[1] + [0], new_arr, node[3] + 1)
+        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
 
     def _slide_right(self, node):
         """
@@ -141,7 +143,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
-        return (self._score_sum(new_arr), node[1] + [2], new_arr, node[3] + 1)
+        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
 
     def _slide_up(self, node):
         """
@@ -151,7 +153,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx - 1,
                                  wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
-        return (self._score_sum(new_arr), node[1] + [1], new_arr, node[3] + 1)
+        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
 
     def _slide_down(self, node):
         """
@@ -161,16 +163,15 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx + 1,
                                  wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
-        return (self._score_sum(new_arr), node[1] + [3], new_arr, node[3] + 1)
+        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
 
     def _astar(self, heap):
         max_state = 0
-        tot_state = 1
         while len(heap):
             max_state = max(max_state, len(heap))
             node = heapq.heappop(heap)
             if np.array_equal(self._solution, node[2]):
-                return (node, max_state, (tot_state, len(heap) + len(self._closed_set)))
+                return (node, max_state, len(heap) + len(self._closed_set))
             a = len(self._closed_set)
             self._closed_set.add(node[2].tostring())
             if a == len(self._closed_set):
@@ -178,16 +179,12 @@ class Solver():
             wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
             if (wy > 0):
                 heapq.heappush(self._open_set, self._slide_left(node))
-                tot_state += 1
             if (wy < self._size - 1):
                 heapq.heappush(self._open_set, self._slide_right(node))
-                tot_state += 1
             if (wx > 0):
                 heapq.heappush(self._open_set, self._slide_up(node))
-                tot_state += 1
             if (wx < self._size - 1):
                 heapq.heappush(self._open_set, self._slide_down(node))
-                tot_state += 1
         else:
             raise NotSolvable 
 

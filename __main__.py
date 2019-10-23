@@ -3,15 +3,18 @@
 
 from npuzzle import *
 import argparse
+import time
 
 
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--heuristic", "-H", type=str, help="heuristic to use", default="manhattan")
+    parser.add_argument("--search", "-s", type=str, help="heuristic to use", default="greedy")
 
     return parser.parse_args()
 
 if __name__ == "__main__":
+    b1 = time.time()
     args = get_args()
     parser = Parser()
     line = None
@@ -24,8 +27,10 @@ if __name__ == "__main__":
     parser.build()
     solver = Solver(parser.numpize(), args)
     a = solver.solve()
+    b2 = time.time()
+    print(b2-b1)
     print("coups a faire : {}".format(a[0][1]))
     print("nombre coups a faire : {}".format(len(a[0][1])))
-    print("nombre etat ouvert max : {}".format(a[1]))
+    print("nombre etat ouvert en meme temps max : {}".format(a[1]))
     print("nombre etat ouvert : {}".format(a[2]))
     print(a)
