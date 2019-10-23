@@ -24,3 +24,6 @@ class WrongNumbering(Exception):
 
 class WrongLineCount(Exception):
     pass
+
+class NotSolvable(Exception):
+    pass

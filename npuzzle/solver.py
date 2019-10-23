@@ -6,6 +6,7 @@ import numpy as np
 from math import sqrt
 import heapq
 
+from .exception import *
 from .parser import Parser
 
 
@@ -20,10 +21,30 @@ class Solver():
         self._puzzle = puzzle
         # Compute desired state
         self._solution = self._snail(puzzle.shape[0])
+        # Check if puzzle if solvable
+        self._solvable(puzzle.shape[0])
         # open set is the heap of investigated states
         self._open_set = []
         # closed is a simple list
         self._closed_set = []
+
+    def _solvable(self, size):
+        nbr_permutation = 0
+        for i in range(size ** 2):
+            wsx, wsy = map(lambda x: x[0], np.where(self._solution == i))
+            wpx, wpy = map(lambda x: x[0], np.where(self._puzzle == i))
+            if not i:
+                parity_zero = (abs(wsx - wpx) + abs(wsy - wpy)) % 2
+            if (wsx == wpx and wsy == wpy):
+                continue
+            else:
+                tmp = self._puzzle[wsx][wsy]
+                self._puzzle[wsx][wsy] = self._puzzle[wpx][wpy]
+                self._puzzle[wpx][wpy] = tmp
+                nbr_permutation += 1
+        parity_permutation = nbr_permutation % 2
+        if (parity_zero != parity_permutation):
+            raise NotSolvable
 
     def _snail(self, size):
         """
@@ -90,4 +111,8 @@ class Solver():
         return self._get_scores(array, method).sum()
 
     def solve(self, args):
+        # open set is the heap of investigated states
+        heapq.heappush(self._open_set, (self.score_sum(self._manhattan), self._puzzle))
+        # closed is a simple list
+        #self._closed_set = []
         return False

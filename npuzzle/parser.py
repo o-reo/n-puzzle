@@ -27,7 +27,7 @@ class Parser:
             raise WrongColumnCount
         self.array += integers
 
-    def push(self, line):
+    def push(self, line, test = 0):
         if not line:
             raise EmptyLine
         line = line.strip()
@@ -57,4 +57,4 @@ class Parser:
         return self.array
     
     def numpize(self):
-        return np.array(self.array).reshape(self.size, self.size)
+        return np.array(self.array).reshape((self.size, self.size))
