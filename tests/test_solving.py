@@ -3,6 +3,7 @@
 import os
 import sys
 import unittest
+import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -50,31 +51,38 @@ class TestSolving(unittest.TestCase):
 #                solver = Solver(None)
 #                is_solved = solver.solve(parse)
 #                self.assertTrue(is_solved and solver.n_moves < 155)
+    def test_slide(self):
+        res = parse_array(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_1.puz'))
+        sol = Solver(res)
+        arr = sol._slide_right(res)
+        self.assertTrue(np.array_equal(arr[1], np.array([[7, 0, 8], [3, 6, 1], [2, 5, 4]])))
+        arr = sol._slide_down(res)
+        self.assertTrue(np.array_equal(arr[1], np.array([[3, 7, 8], [0, 6, 1], [2, 5, 4]])))
 
     def test_unsolvable(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_1.puz'), NotSolvable)
         self.assertTrue(res)
 
-    def test_unsolvable(self):
+    def test_unsolvable2(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_2.puz'), NotSolvable)
         self.assertTrue(res)
 
-    def test_unsolvable(self):
+    def test_unsolvable3(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_3.puz'), NotSolvable)
         self.assertTrue(res)
 
-    def test_unsolvable(self):
+    def test_unsolvable4(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_4.puz'), NotSolvable)
         self.assertTrue(res)
 
-    def test_unsolvable(self):
+    def test_unsolvable5(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_5.puz'), NotSolvable)
         self.assertTrue(res)
 
-    def test_unsolvable(self):
+    def test_unsolvable6(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_6.puz'), NotSolvable)
         self.assertTrue(res)
 
-    def test_unsolvable(self):
+    def test_unsolvable7(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_7.puz'), NotSolvable)
         self.assertTrue(res)

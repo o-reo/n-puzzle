@@ -27,3 +27,6 @@ class WrongLineCount(Exception):
 
 class NotSolvable(Exception):
     pass
+
+class InvalidHeuristic(Exception):
+    pass
