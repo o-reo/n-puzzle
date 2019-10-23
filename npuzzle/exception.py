@@ -10,6 +10,9 @@ class EmptyLine(Exception):
 class SizeTooSmall(Exception):
     pass
 
+class SizeTooBif(Exception):
+    pass
+
 class BadInput(Exception):
     pass
 

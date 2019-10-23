@@ -11,7 +11,7 @@ from .parser import Parser
 
 
 class Solver():
-    def __init__(self, puzzle):
+    def __init__(self, puzzle, args):
         """
             Score computation examples    
             self._score_max(self._solution, self._hamming)
@@ -21,12 +21,27 @@ class Solver():
         self._puzzle = puzzle
         # Compute desired state
         self._solution = self._snail(puzzle.shape[0])
-        # Check if puzzle if solvable
-        self._solvable(puzzle.shape[0])
+        # Get heuristic
+        self._heuristic = self.dispatch(args)
         # open set is the heap of investigated states
         self._open_set = []
         # closed is a simple list
-        self._closed_set = []
+        self._closed_set = set()
+
+    def _snail(self, size):
+        """
+        Generate a snail matrix that is the desired solution
+        """
+        snail = np.zeros((size, size))
+        x, y = 0, 0
+        dx, dy = 0, 1
+        for i in range(1, size ** 2):
+            snail[x, y] = i
+            # rotate when out of bounds or already filled
+            if x + dx < 0 or x + dx >= size or y + dy < 0 or y + dy >= size or snail[x+dx, y+dy] != 0:
+                dx, dy = dy, -dx
+            x, y = x + dx, y + dy
+        return snail
 
     def _solvable(self, size):
         nbr_permutation = 0
@@ -46,20 +61,15 @@ class Solver():
         if (parity_zero != parity_permutation):
             raise NotSolvable
 
-    def _snail(self, size):
-        """
-        Generate a snail matrix that is the desired solution
-        """
-        snail = np.zeros((size, size))
-        x, y = 0, 0
-        dx, dy = 0, 1
-        for i in range(1, size ** 2):
-            snail[x, y] = i
-            # rotate when out of bounds or already filled
-            if x + dx < 0 or x + dx >= size or y + dy < 0 or y + dy >= size or snail[x+dx, y+dy] != 0:
-                dx, dy = dy, -dx
-            x, y = x + dx, y + dy
-        return snail
+    def _dispatch(self, heuristic):
+        if heuristic == euclidian:
+            return self._euclidian
+        if heuristic == manhattan:
+            return self._manhattan
+        if heuristic == hamming:
+            return self._hamming
+        if heuristic == linear_conflict:
+            return self._linear_conflict
 
     def _target(self, num_piece):
         """
@@ -110,9 +120,40 @@ class Solver():
     def _score_sum(self, array, method):
         return self._get_scores(array, method).sum()
 
+    def _astar(self, heap):
+        M = 0
+        tot = 0
+        while (len(heap)):
+            M = max(M, len(heap))
+            tot += 1
+            node = heapq.heappop(heap)
+            if np.equal(self._snails, node[1]):
+                return (M, nbr)
+                break
+            a = len(self._close)
+            self._close.add(node[1])
+            if (a == len(self._close))
+                continue
+            wx, wy = map(lambda x: x[0], np.where(node[1] == 0))
+            if (wx > 0):
+                heapq.heappush(self._open_set, self._slide_left(node))
+            if (wx < self._size - 1):
+                heapq.heappush(self._open_set, self._slide_right(node))
+            if (wy > 0):
+                heapq.heappush(self._open_set, self._slide_up(node))
+            if (wy < self._size - 1):
+                heapq.heappush(self._open_set, self._slide_down(node))
+        else:
+            raise NotSolvable 
+
+            
+        
+
     def solve(self, args):
+        self._solvable()
         # open set is the heap of investigated states
-        heapq.heappush(self._open_set, (self.score_sum(self._manhattan), self._puzzle))
+        heapq.heappush(self._open_set, (self.score_sum(self._manhattan), self._puzzle, 0, []))
+        self._astar(heapq.heapify(self._open_set))
         # closed is a simple list
         #self._closed_set = []
         return False
