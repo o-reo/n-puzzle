@@ -4,7 +4,7 @@
 from npuzzle import *
 import argparse
 import time
-
+import cProfile
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -26,11 +26,5 @@ if __name__ == "__main__":
             break
     parser.build()
     solver = Solver(parser.numpize(), args)
-    a = solver.solve()
-    b2 = time.time()
-    print(b2-b1)
-    print("coups a faire : {}".format(a[0][1]))
-    print("nombre coups a faire : {}".format(len(a[0][1])))
-    print("nombre etat ouvert en meme temps max : {}".format(a[1]))
-    print("nombre etat ouvert : {}".format(a[2]))
-    print(a)
+    # cProfile.run("solver.solve()")
+    print(solver.solve())

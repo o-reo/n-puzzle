@@ -6,7 +6,7 @@ import numpy as np
 from math import sqrt
 import heapq
 
-from .exception import *
+from .exception import NotSolvable
 from .parser import Parser
 
 
@@ -30,6 +30,9 @@ class Solver():
         self._open_set = []
         # closed is a simple list
         self._closed_set = set()
+        # compute desired locations of the pieces
+        self._targets = []
+        self._compute_targets()
 
     def _snail(self):
         """
@@ -77,12 +80,11 @@ class Solver():
             return self._linear_conflict
         raise InvalidHeuristic
 
-    def _target(self, num_piece):
-        """
-        Get the desired slot coordinates
-        """
-        wx, wy = map(lambda x: x[0], np.where(self._solution == num_piece))
-        return wx, wy
+    def _compute_targets(self):
+        self._targets.append(None)
+        for i in range(1, self._size2):
+            wx, wy = map(lambda x: x[0], np.where(self._solution == i))
+            self._targets.append((wx, wy))
 
     # Heuristics
     def _euclidian(self, array, target, coords):
@@ -100,30 +102,24 @@ class Solver():
         if coords[0] == target[0]:
             direction = 2 * (target[1] > coords[1]) - 1
             for x in range(coords[1] + direction, target[1] + direction):
-                if array[coords[0], x] != 0 and self._target(array[coords[0], x])[0] == target[0]:
+                if array[coords[0], x] != 0 and self._targets[array[coords[0], x]][0] == target[0]:
                     add = 1
         elif coords[1] == target[1]:
             direction = 2 * (target[1] > coords[1]) - 1
             for x in range(coords[0] + direction, target[0]):
-                if array[x, coords[1]] != 0 and self._target(array[x, coords[1]])[1] == target[1]:
+                if array[x, coords[1]] != 0 and self._targets[array[x, coords[1]]][1] == target[1]:
                     add = 1
         return score + add
     # --
 
-    def _get_scores(self, array, method):
-        scores = np.zeros(self._size2)
-        for i in range(self._size2):
-            x, y = int(i / self._size), i % self._size
-            target_coords = self._target(array[x, y])
-            if (array[x, y] != 0):
-                scores[i] = method(array, target_coords, (x, y))
-        return scores
-
-    def _score_max(self, array):
-        return self._get_scores(array, self._heuristic).max()
-
-    def _score_sum(self, array):
-        return self._get_scores(array, self._heuristic).sum()
+    def _get_score(self, array):
+        score = 0
+        it = np.nditer(array, flags=['multi_index'])
+        while not it.finished:
+            score += self._heuristic(array, self._targets[array[it.multi_index]],
+                                     it.multi_index) if array[it.multi_index] != 0 else 0
+            it.iternext()
+        return score
 
     def _slide_left(self, node):
         """
@@ -133,7 +129,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
-        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
+        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
 
     def _slide_right(self, node):
         """
@@ -143,7 +139,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
-        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
+        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
 
     def _slide_up(self, node):
         """
@@ -153,7 +149,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx - 1,
                                  wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
-        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
+        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
 
     def _slide_down(self, node):
         """
@@ -163,7 +159,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx + 1,
                                  wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
-        return (self._score_sum(new_arr) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
+        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
 
     def _astar(self, heap):
         max_state = 0
@@ -186,13 +182,12 @@ class Solver():
             if (wx < self._size - 1):
                 heapq.heappush(self._open_set, self._slide_down(node))
         else:
-            raise NotSolvable 
+            raise NotSolvable
 
     def solve(self):
         self._solvable()
         # open set is the heap of investigated states
-        heapq.heappush(self._open_set, (self._score_sum(self._puzzle), [], self._puzzle, 0))
+        heapq.heappush(self._open_set, (self._get_score(
+            self._puzzle), [], self._puzzle, 0))
         a = self._astar(self._open_set)
-        # closed is a simple list
-        #self._closed_set = []
         return a
