@@ -13,7 +13,7 @@ PIECE_SPACE = 1
 class PuzzleInterface(arcade.Window):
     def __init__(self):
         super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT, 'n-puzzle solver')
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(arcade.color.METALLIC_SEAWEED)
         self.board = np.array([])
         self.size = 0
         self.moves = []
@@ -142,4 +142,6 @@ class PuzzleInterface(arcade.Window):
     def on_draw(self):
         """ Render the screen. """
         arcade.start_render()
+        arcade.draw_text(f"Move nº{self.iter}", WINDOW_WIDTH - 500, int(WINDOW_MARGIN / 4),
+                         arcade.csscolor.BLACK, 20)
         self.pieces.draw()
