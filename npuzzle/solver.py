@@ -3,7 +3,6 @@
 import sys
 import os
 import numpy as np
-from math import sqrt
 import heapq
 
 from .exception import NotSolvable, InvalidHeuristic
@@ -90,7 +89,7 @@ class Solver():
 
     # Heuristics
     def _euclidian(self, array, target, coords):
-        return sqrt((target[0] - coords[0]) ** 2 + (target[1] - coords[1]) ** 2)
+        return np.sqrt((target[0] - coords[0]) ** 2 + (target[1] - coords[1]) ** 2)
 
     def _manhattan(self, array, target, coords):
         return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
@@ -123,11 +122,14 @@ class Solver():
             it.iternext()
         return score
 
+    def _get_zero(self, array):
+        return [e[0] for e in np.where(array == 0)]
+
     def _slide_left(self, node):
         """
             return tuple (score, new_puzzle)
         """
-        wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+        wx, wy = self._get_zero(node[2])
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
@@ -137,7 +139,7 @@ class Solver():
         """
             return tuple (score, new_puzzle)
         """
-        wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+        wx, wy = self._get_zero(node[2])
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx - 1,
                                  wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
@@ -147,7 +149,7 @@ class Solver():
         """
             return tuple (score, new_puzzle)
         """
-        wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+        wx, wy = self._get_zero(node[2])
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
@@ -157,7 +159,7 @@ class Solver():
         """
             return tuple (score, moves, new_puzzle, number of moves)
         """
-        wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+        wx, wy = self._get_zero(node[2])
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx + 1,
                                  wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
@@ -174,7 +176,7 @@ class Solver():
             self._closed_set.add(node[2].tostring())
             if a == len(self._closed_set):
                 continue
-            wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+            wx, wy = self._get_zero(node[2])
             if (wy > 0):
                 heapq.heappush(self._open_set, self._slide_left(node))
             if (wy < self._size - 1):
