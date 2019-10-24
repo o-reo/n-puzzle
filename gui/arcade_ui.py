@@ -24,7 +24,7 @@ class PuzzleInterface(arcade.Window):
         self.speed = 15
         self.pause = True
 
-    def setup(self, solver, solution):
+    def setup(self, solver, solution, image = None):
         # init values
         self.solver = solver
         self.size = solver._size
@@ -32,19 +32,32 @@ class PuzzleInterface(arcade.Window):
         self.moves = solution[0][1]
         self.pieces = arcade.SpriteList()
         self.labels = []
+        self.image = image
         self.piece_size = int((WINDOW_WIDTH - 2 * WINDOW_MARGIN) / self.size)
         self._generate_sprites()
         self._init_pieces()
 
     def _generate_sprites(self):
-        for i in range(1, self.size ** 2):
-            img = Image.open("gui/assets/square.png")
-            draw = ImageDraw.Draw(img)
-            font = ImageFont.truetype("gui/assets/font.ttf", 128)
-            draw.text((int(SPRITE_SIZE / 2) - 24, int(SPRITE_SIZE / 2) - 64), "{}".format(i), (255, 255, 255), font=font)
-            img.save('gui/assets/p_{}.png'.format(i))
-            piece = arcade.Sprite('gui/assets/p_{}.png'.format(i), self.piece_size / SPRITE_SIZE)
-            self.pieces.append(piece)
+        if not self.image:
+            for i in range(1, self.size ** 2):
+                img = Image.open("gui/assets/square.png")
+                draw = ImageDraw.Draw(img)
+                font = ImageFont.truetype("gui/assets/font.ttf", 128)
+                draw.text((int(SPRITE_SIZE / 2) - 20 * (1 + int(i / 10)), int(SPRITE_SIZE / 2) - 64), "{}".format(i), (255, 255, 255), font=font)
+                img.save('gui/assets/p_{}.png'.format(i))
+                piece = arcade.Sprite('gui/assets/p_{}.png'.format(i), self.piece_size / SPRITE_SIZE)
+                self.pieces.append(piece)
+        else:
+            img = Image.open(self.image)
+            image_width = WINDOW_WIDTH - 2 * WINDOW_MARGIN if img.height > img.width else img.width / img.height * (WINDOW_HEIGHT - 2 * WINDOW_MARGIN)
+            image_height = img.height / img.width * (WINDOW_WIDTH - 2 * WINDOW_MARGIN) if img.height > img.width else WINDOW_HEIGHT - 2 * WINDOW_MARGIN
+            img = img.resize((int(image_width), int(image_height)))
+            for i in range(1, self.size ** 2):
+                wsx, wsy = map(lambda x: x[0], np.where(self.solver._solution == i))
+                crop = img.crop((wsy * self.piece_size, wsx * self.piece_size, (wsy + 1) * self.piece_size, (wsx + 1) * self.piece_size))
+                crop.save('gui/assets/p_{}.png'.format(i))
+                piece = arcade.Sprite('gui/assets/p_{}.png'.format(i), 1)
+                self.pieces.append(piece)
 
     def _init_pieces(self):
         it = np.nditer(self.puzzle, flags=['multi_index'])
@@ -56,6 +69,7 @@ class PuzzleInterface(arcade.Window):
             piece = self.pieces[self.puzzle[it.multi_index] - 1]
             piece.center_x = w_coords[0]
             piece.center_y = w_coords[1]
+            piece.color = arcade.color.LIGHT_STEEL_BLUE if self.image else arcade.color.WHITE
             it.iternext()
 
     def _update_pieces(self, delta_time):
@@ -66,6 +80,10 @@ class PuzzleInterface(arcade.Window):
                 continue
             w_coords = self._draw_coordinates(it.multi_index)
             piece = self.pieces[self.puzzle[it.multi_index] - 1]
+            if self.puzzle[it.multi_index] == self.solver._solution[it.multi_index]:
+                piece.color = arcade.color.WHITE if self.image else arcade.color.ROYAL_BLUE
+            else:
+                piece.color = arcade.color.LIGHT_STEEL_BLUE if self.image else arcade.color.WHITE   
             if piece.center_x != w_coords[0]:
                 piece.change_x = min(abs(piece.center_x - w_coords[0]), self.speed) * (2 * (piece.center_x < w_coords[0]) - 1)
                 return
@@ -112,10 +130,9 @@ class PuzzleInterface(arcade.Window):
             self.puzzle = self.solver._puzzle.copy()
             self.iter = 0
             self._init_pieces()
-            arcade.pause(1)
-            self.pause = False
-
-
+        if key == arcade.key.ESCAPE:
+            arcade.close_window()
+    
     def update(self, delta_time):
         if self.pause:
             return

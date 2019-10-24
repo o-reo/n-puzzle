@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from npuzzle import Parser, Solver
-from gui import PuzzleInterface
 import argparse
 import cProfile
 import sys
-import arcade
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -14,6 +12,8 @@ def get_args():
                         help="heuristic to use", default="manhattan")
     parser.add_argument("--search", "-s", type=str,
                         help="heuristic to use", default="greedy")
+    parser.add_argument("--image", "-i", type=str,
+                        help="image to use for the user interface", default=None)
     parser.add_argument("--profiling", "-p",
                         help="profiling functions", action="store_true")
     parser.add_argument("--display", "-d",
@@ -40,8 +40,10 @@ if __name__ == "__main__":
         sys.exit()
     a = solver.solve()
     if args.display:
+        import arcade
+        from gui import PuzzleInterface
         puz_ui = PuzzleInterface()
-        puz_ui.setup(solver, a)
+        puz_ui.setup(solver, a, args.image)
         arcade.run()
     else:
         print("Coups : {}".format(len(a[0][1])))
