@@ -43,15 +43,16 @@ class PuzzleInterface(arcade.Window):
                 img = Image.open("gui/assets/square.png")
                 draw = ImageDraw.Draw(img)
                 font = ImageFont.truetype("gui/assets/font.ttf", 128)
-                draw.text((int(SPRITE_SIZE / 2) - 20 * (1 + int(i / 10)), int(SPRITE_SIZE / 2) - 64), "{}".format(i), (255, 255, 255), font=font)
+                draw.text((SPRITE_SIZE // 2 - 20 * (1 + i // 10), SPRITE_SIZE // 2 - 64), "{}".format(i), (255, 255, 255), font=font)
                 img.save('gui/assets/p_{}.png'.format(i))
                 piece = arcade.Sprite('gui/assets/p_{}.png'.format(i), self.piece_size / SPRITE_SIZE)
                 self.pieces.append(piece)
         else:
             img = Image.open(self.image)
-            image_width = WINDOW_WIDTH - 2 * WINDOW_MARGIN if img.height > img.width else img.width / img.height * (WINDOW_HEIGHT - 2 * WINDOW_MARGIN)
+            img = img.crop((max(0, img.width - img.height) // 2, max(0, img.height - img.width) // 2, min(img.height, img.width), min(img.height, img.width)))
+            image_width = WINDOW_WIDTH - 2 * WINDOW_MARGIN if img.height > img.width else img.width // img.height * (WINDOW_HEIGHT - 2 * WINDOW_MARGIN)
             image_height = img.height / img.width * (WINDOW_WIDTH - 2 * WINDOW_MARGIN) if img.height > img.width else WINDOW_HEIGHT - 2 * WINDOW_MARGIN
-            img = img.resize((int(image_width), int(image_height)))
+            img = img.resize((image_width, image_height))
             for i in range(1, self.size ** 2):
                 wsx, wsy = map(lambda x: x[0], np.where(self.solver._solution == i))
                 crop = img.crop((wsy * self.piece_size, wsx * self.piece_size, (wsy + 1) * self.piece_size, (wsx + 1) * self.piece_size))
@@ -115,8 +116,8 @@ class PuzzleInterface(arcade.Window):
                                  wy] = self.puzzle[wx + 1, wy], self.puzzle[wx, wy]
     
     def _draw_coordinates(self, coords):
-        return (WINDOW_MARGIN + coords[1] * self.piece_size + int(
-                self.piece_size / 2), WINDOW_HEIGHT - (WINDOW_MARGIN + coords[0] * self.piece_size + int(self.piece_size / 2)))
+        return (WINDOW_MARGIN + coords[1] * self.piece_size + 
+                self.piece_size // 2, WINDOW_HEIGHT - (WINDOW_MARGIN + coords[0] * self.piece_size + self.piece_size // 2))
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.LEFT and self.speed > 5:
@@ -142,6 +143,6 @@ class PuzzleInterface(arcade.Window):
     def on_draw(self):
         """ Render the screen. """
         arcade.start_render()
-        arcade.draw_text(f"Move nº{self.iter}", WINDOW_WIDTH - 500, int(WINDOW_MARGIN / 4),
+        arcade.draw_text(f"Move nº{self.iter}", WINDOW_WIDTH - 500, WINDOW_MARGIN // 4,
                          arcade.csscolor.BLACK, 20)
         self.pieces.draw()

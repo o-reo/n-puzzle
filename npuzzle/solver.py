@@ -85,7 +85,7 @@ class Solver():
     def _compute_targets(self):
         self._targets.append((-1, -1))
         for i in range(1, self._size2):
-            wx, wy = map(lambda x: x[0], np.where(self._solution == i))
+            wx, wy = map(lambda x: int(x[0]), np.where(self._solution == i))
             self._targets.append((wx, wy))
 
     # Heuristics
@@ -168,7 +168,7 @@ class Solver():
         while len(heap):
             max_state = max(max_state, len(heap))
             node = heapq.heappop(heap)
-            if np.array_equal(self._solution, node[2]):
+            if np.all(self._solution == node[2]):
                 return (node, max_state, len(heap) + len(self._closed_set))
             a = len(self._closed_set)
             self._closed_set.add(node[2].tostring())
