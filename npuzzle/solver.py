@@ -83,7 +83,7 @@ class Solver():
         raise InvalidHeuristic
 
     def _compute_targets(self):
-        self._targets.append(None)
+        self._targets.append((-1, -1))
         for i in range(1, self._size2):
             wx, wy = map(lambda x: x[0], np.where(self._solution == i))
             self._targets.append((wx, wy))
@@ -100,26 +100,26 @@ class Solver():
 
     def _linear_conflict(self, array, target, coords):
         score = self._manhattan(array, target, coords)
-        add = 0
         if coords[0] == target[0]:
-            direction = 2 * (target[1] > coords[1]) - 1
-            for x in range(coords[1] + direction, target[1] + direction):
-                if array[coords[0], x] != 0 and self._targets[array[coords[0], x]][0] == target[0]:
-                    add = 1
+            direction = 2 * (target[1] < coords[1]) - 1
+            for x in range(coords[1] + direction, target[1]):
+                if self._targets[array[coords[0], x]][0] == target[0]:
+                    return score + 1
         elif coords[1] == target[1]:
-            direction = 2 * (target[1] > coords[1]) - 1
+            direction = 2 * (target[0] < coords[0]) - 1
             for x in range(coords[0] + direction, target[0]):
-                if array[x, coords[1]] != 0 and self._targets[array[x, coords[1]]][1] == target[1]:
-                    add = 1
-        return score + add
-    # --
+                if self._targets[array[x, coords[1]]][1] == target[1]:
+                    return score + 1
+        return score
 
     def _get_score(self, array):
         score = 0
         it = np.nditer(array, flags=['multi_index'])
         while not it.finished:
-            score += self._heuristic(array, self._targets[array[it.multi_index]],
-                                     it.multi_index) if array[it.multi_index] != 0 else 0
+            target = self._targets[array[it.multi_index]]
+            if array[it.multi_index] != 0 and it.multi_index != target:
+                score += self._heuristic(array, target,
+                                         it.multi_index)
             it.iternext()
         return score
 
@@ -205,7 +205,7 @@ class Solver():
             print(self._directions[move])
             puz = self.slide(puz, move)
             print(puz)
-        
+
     def solve(self):
         self._solvable()
         # open set is the heap of investigated states

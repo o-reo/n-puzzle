@@ -4,7 +4,6 @@
 from npuzzle import Parser, Solver
 import argparse
 import cProfile
-import sys
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -19,6 +18,11 @@ def get_args():
     parser.add_argument("--display", "-d",
                         help="curses user interface", action="store_true")
     return parser.parse_args()
+
+def print_stats(sol):
+    print("Coups : {}".format(len(sol[0][1])))
+    print("Etats simultanés : {}".format(sol[1]))
+    print("Etats ouverts : {}".format(sol[2]))
 
 if __name__ == "__main__":
     args = get_args()
@@ -35,9 +39,10 @@ if __name__ == "__main__":
     if args.profiling:
         # PROFILING
         def solving():
-            print(solver.solve())
+            a = solver.solve()
+            print_stats(a)
         cProfile.run('solving()', sort='tottime')
-        sys.exit()
+        exit()
     a = solver.solve()
     if args.display:
         import arcade
@@ -45,8 +50,7 @@ if __name__ == "__main__":
         puz_ui = PuzzleInterface()
         puz_ui.setup(solver, a, args.image)
         arcade.run()
+        exit()
     else:
-        print("Coups : {}".format(len(a[0][1])))
-        print("Etats simultanés : {}".format(a[1]))
-        print("Etats ouverts : {}".format(a[2]))
+        print_stats(a)
         solver.print_solution(a)
