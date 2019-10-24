@@ -6,7 +6,7 @@ import numpy as np
 from math import sqrt
 import heapq
 
-from .exception import NotSolvable
+from .exception import NotSolvable, InvalidHeuristic
 from .parser import Parser
 
 
@@ -33,6 +33,8 @@ class Solver():
         # compute desired locations of the pieces
         self._targets = []
         self._compute_targets()
+        # to print directions
+        self._directions = ['left', 'up', 'right', 'down']
 
     def _snail(self):
         """
@@ -131,16 +133,6 @@ class Solver():
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
         return (self._get_score(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
 
-    def _slide_right(self, node):
-        """
-            return tuple (score, new_puzzle)
-        """
-        wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
-        new_arr = node[2].copy()
-        new_arr[wx, wy], new_arr[wx,
-                                 wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
-        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
-
     def _slide_up(self, node):
         """
             return tuple (score, new_puzzle)
@@ -151,9 +143,19 @@ class Solver():
                                  wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
         return (self._get_score(new_arr) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
 
-    def _slide_down(self, node):
+    def _slide_right(self, node):
         """
             return tuple (score, new_puzzle)
+        """
+        wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
+        new_arr = node[2].copy()
+        new_arr[wx, wy], new_arr[wx,
+                                 wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
+        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
+
+    def _slide_down(self, node):
+        """
+            return tuple (score, moves, new_puzzle, number of moves)
         """
         wx, wy = map(lambda x: x[0], np.where(node[2] == 0))
         new_arr = node[2].copy()
@@ -184,6 +186,26 @@ class Solver():
         else:
             raise NotSolvable
 
+    def slide(self, puzzle, direction):
+        puz = None
+        if direction == 0:
+            _, _, puz, _ = self._slide_left((0, [], puzzle, 0))
+        if direction == 1:
+            _, _, puz, _ = self._slide_up((0, [], puzzle, 0))
+        if direction == 2:
+            _, _, puz, _ = self._slide_right((0, [], puzzle, 0))
+        if direction == 3:
+            _, _, puz, _ = self._slide_down((0, [], puzzle, 0))
+        return puz
+
+    def print_solution(self, solution):
+        puz = self._puzzle.copy()
+        print(puz)
+        for move in solution[0][1]:
+            print(self._directions[move])
+            puz = self.slide(puz, move)
+            print(puz)
+        
     def solve(self):
         self._solvable()
         # open set is the heap of investigated states

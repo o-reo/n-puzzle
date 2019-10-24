@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from npuzzle import *
+from npuzzle import Parser, Solver
+from gui import PuzzleInterface
 import argparse
-import time
 import cProfile
 import sys
+import arcade
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--heuristic", "-H", type=str, help="heuristic to use", default="manhattan")
-    parser.add_argument("--search", "-s", type=str, help="heuristic to use", default="greedy")
-    parser.add_argument("--profiling", "-p", help="profiling functions", action="store_true")
-
+    parser.add_argument("--heuristic", "-H", type=str,
+                        help="heuristic to use", default="manhattan")
+    parser.add_argument("--search", "-s", type=str,
+                        help="heuristic to use", default="greedy")
+    parser.add_argument("--profiling", "-p",
+                        help="profiling functions", action="store_true")
+    parser.add_argument("--display", "-d",
+                        help="curses user interface", action="store_true")
     return parser.parse_args()
 
 if __name__ == "__main__":
-    b1 = time.time()
     args = get_args()
     parser = Parser()
     line = None
@@ -29,17 +33,18 @@ if __name__ == "__main__":
     parser.build()
     solver = Solver(parser.numpize(), args)
     if args.profiling:
-    # PROFILING
+        # PROFILING
         def solving():
             print(solver.solve())
         cProfile.run('solving()', sort='tottime')
         sys.exit()
     a = solver.solve()
-    b2 = time.time()
-    print(b2-b1)
-    print("coups a faire : {}".format(a[0][1]))
-    print("nombre coups a faire : {}".format(len(a[0][1])))
-    print("nombre etat ouvert en meme temps max : {}".format(a[1]))
-    print("nombre etat ouvert : {}".format(a[2]))
-
-    
+    if args.display:
+        puz_ui = PuzzleInterface()
+        puz_ui.setup(solver, a)
+        arcade.run()
+    else:
+        print("Coups : {}".format(len(a[0][1])))
+        print("Etats simultanés : {}".format(a[1]))
+        print("Etats ouverts : {}".format(a[2]))
+        solver.print_solution(a)
