@@ -49,12 +49,13 @@ class Parser:
             raise SizeTooSmall
         if len(self.array) != self.size ** 2:
             raise WrongLineCount
-        check = list(range(0, self.size ** 2))
+        self.array = np.array(self.array)
+        check = np.array(list(range(0, self.size ** 2)))
         sorted_arr = self.array.copy()
         sorted_arr.sort()
-        if sorted_arr != check:
+        if not np.all(sorted_arr == check):
             raise WrongNumbering
         return self.array
-    
+
     def numpize(self):
         return np.array(self.array).reshape((self.size, self.size))

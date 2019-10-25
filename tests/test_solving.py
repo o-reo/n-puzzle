@@ -26,10 +26,13 @@ def try_error(file_name, error_code):
         try:
             parser.build()
             solver = Solver(parser.numpize())
+            solver.solve()
         except error_code:
             return True
         except Exception as e:
+            print(e)
             return False
+        print("yo")
         return False
 
 def parse_array(file_name):
@@ -44,44 +47,47 @@ def parse_array(file_name):
 class TestSolving(unittest.TestCase):
 
     def test_solvable_stored(self):
-        tot_time, tot_max_state, tot_state = 0
+        tot_time, tot_max_state, tot_state, tot_move = 0, 0, 0, 0
         for i in range(1, 100):
             with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_{}.puz'.format(i))) as input_file:
-                parse = Parser()
-                while parse.push(input_file.readline()):
-                    pass
+                parser = Parser()
+                lines = input_file.readlines()
+                for line in lines:
+                    parser.push(line)
                 actual_time = time.time()
-                solver = Solver(None)
-                temp = solver.solve(parse)
+                solver = Solver(parser.numpize())
+                temp = solver.solve()
                 end_time = time.time()
+            tot_move += len(temp[0][1])
             tot_max_state += temp[1]
             tot_state += temp[2]
             tot_time += (end_time - actual_time)
         print("On stored puzzle :")
+        print("Average move", tot_move / 99)
         print("Average time spent :", tot_time / 99)
         print("Average state opened:", tot_state / 99)
         print("Average max state opened:", tot_max_state / 99)
 
-    def test_solvable_random(self):
-        tot_time, tot_max_state, tot_state = 0
-        for i in range(1, 100):
-            os.system("python resources/res_npuzzle-gen.py -s 3 > test.puzz")
-            with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test.puzz') as input_file:
-                parse = Parser()
-                while parse.push(input_file.readline()):
-                    pass
-                actual_time = time.time()
-                solver = Solver(None)
-                temp = solver.solve(parse)
-                end_time = time.time()
-            tot_max_state += temp[1]
-            tot_state += temp[2]
-            tot_time += (end_time - actual_time)
-        print("On stored puzzle :")
-        print("Average time spent :", tot_time / 99)
-        print("Average state opened:", tot_state / 99)
-        print("Average max state opened:", tot_max_state / 99)
-        os.system("rm test.puzz")
+#    def test_solvable_random(self):
+#        tot_time, tot_max_state, tot_state = 0
+#        for i in range(1, 100):
+#            os.system("python resources/res_npuzzle-gen.py -s 3 > test.puzz")
+#            with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test.puzz')) as input_file:
+#                parse = Parser()
+#                while parse.push(input_file.readline()):
+#                    pass
+#                actual_time = time.time()
+#                solver = Solver(None)
+#                temp = solver.solve(parse)
+#                end_time = time.time()
+#            tot_max_state += temp[1]
+#            tot_state += temp[2]
+#            tot_time += (end_time - actual_time)
+#        print("On stored puzzle :")
+#        print("Average time spent :", tot_time / 99)
+#        print("Average state opened:", tot_state / 99)
+#        print("Average max state opened:", tot_max_state / 99)
+#        os.system("rm test.puzz")
 
 #    def test_solvable(self):
 #        for i in range(1, 6):
