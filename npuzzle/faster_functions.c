@@ -929,7 +929,7 @@ typedef struct __pyx_ctuple_int__and_int __pyx_ctuple_int__and_int;
 /* "npuzzle/faster_functions.pyx":6
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
- * def fast_manhattan((int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
+ * def fast_manhattan(array, targets, (int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
  *     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
  * 
  */
@@ -1979,7 +1979,7 @@ static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_x;
-static PyObject *__pyx_pf_7npuzzle_16faster_functions_fast_manhattan(CYTHON_UNUSED PyObject *__pyx_self, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords); /* proto */
+static PyObject *__pyx_pf_7npuzzle_16faster_functions_fast_manhattan(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_array, CYTHON_UNUSED PyObject *__pyx_v_targets, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords); /* proto */
 static PyObject *__pyx_pf_7npuzzle_16faster_functions_2fast_euclidian(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_array, CYTHON_UNUSED PyObject *__pyx_v_targets, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords); /* proto */
 static PyObject *__pyx_pf_7npuzzle_16faster_functions_4fast_hamming(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_array, CYTHON_UNUSED PyObject *__pyx_v_targets, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords); /* proto */
 static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_array, PyObject *__pyx_v_targets, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords); /* proto */
@@ -2074,7 +2074,7 @@ static PyObject *__pyx_codeobj__35;
 /* "npuzzle/faster_functions.pyx":6
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
- * def fast_manhattan((int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
+ * def fast_manhattan(array, targets, (int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
  *     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
  * 
  */
@@ -2083,18 +2083,24 @@ static PyObject *__pyx_codeobj__35;
 static PyObject *__pyx_pw_7npuzzle_16faster_functions_1fast_manhattan(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyMethodDef __pyx_mdef_7npuzzle_16faster_functions_1fast_manhattan = {"fast_manhattan", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_7npuzzle_16faster_functions_1fast_manhattan, METH_VARARGS|METH_KEYWORDS, 0};
 static PyObject *__pyx_pw_7npuzzle_16faster_functions_1fast_manhattan(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  CYTHON_UNUSED PyObject *__pyx_v_array = 0;
+  CYTHON_UNUSED PyObject *__pyx_v_targets = 0;
   __pyx_ctuple_int__and_int __pyx_v_target;
   __pyx_ctuple_int__and_int __pyx_v_coords;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("fast_manhattan (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_target,&__pyx_n_s_coords,0};
-    PyObject* values[2] = {0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_array,&__pyx_n_s_targets,&__pyx_n_s_target,&__pyx_n_s_coords,0};
+    PyObject* values[4] = {0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
         CYTHON_FALLTHROUGH;
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -2105,43 +2111,59 @@ static PyObject *__pyx_pw_7npuzzle_16faster_functions_1fast_manhattan(PyObject *
       kw_args = PyDict_Size(__pyx_kwds);
       switch (pos_args) {
         case  0:
-        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_target)) != 0)) kw_args--;
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_array)) != 0)) kw_args--;
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_coords)) != 0)) kw_args--;
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_targets)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("fast_manhattan", 1, 2, 2, 1); __PYX_ERR(0, 6, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("fast_manhattan", 1, 4, 4, 1); __PYX_ERR(0, 6, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_target)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("fast_manhattan", 1, 4, 4, 2); __PYX_ERR(0, 6, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_coords)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("fast_manhattan", 1, 4, 4, 3); __PYX_ERR(0, 6, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "fast_manhattan") < 0)) __PYX_ERR(0, 6, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_target = __pyx_convert__from_py___pyx_ctuple_int__and_int(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
-    __pyx_v_coords = __pyx_convert__from_py___pyx_ctuple_int__and_int(values[1]); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
+    __pyx_v_array = values[0];
+    __pyx_v_targets = values[1];
+    __pyx_v_target = __pyx_convert__from_py___pyx_ctuple_int__and_int(values[2]); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
+    __pyx_v_coords = __pyx_convert__from_py___pyx_ctuple_int__and_int(values[3]); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("fast_manhattan", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 6, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("fast_manhattan", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 6, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("npuzzle.faster_functions.fast_manhattan", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7npuzzle_16faster_functions_fast_manhattan(__pyx_self, __pyx_v_target, __pyx_v_coords);
+  __pyx_r = __pyx_pf_7npuzzle_16faster_functions_fast_manhattan(__pyx_self, __pyx_v_array, __pyx_v_targets, __pyx_v_target, __pyx_v_coords);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7npuzzle_16faster_functions_fast_manhattan(CYTHON_UNUSED PyObject *__pyx_self, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords) {
+static PyObject *__pyx_pf_7npuzzle_16faster_functions_fast_manhattan(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_array, CYTHON_UNUSED PyObject *__pyx_v_targets, __pyx_ctuple_int__and_int __pyx_v_target, __pyx_ctuple_int__and_int __pyx_v_coords) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -2151,7 +2173,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_fast_manhattan(CYTHON_UNUS
 
   /* "npuzzle/faster_functions.pyx":7
  * @cython.wraparound(False)
- * def fast_manhattan((int, int) target, (int, int) coords):
+ * def fast_manhattan(array, targets, (int, int) target, (int, int) coords):
  *     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])             # <<<<<<<<<<<<<<
  * 
  * @cython.boundscheck(False)
@@ -2168,7 +2190,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_fast_manhattan(CYTHON_UNUS
   /* "npuzzle/faster_functions.pyx":6
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
- * def fast_manhattan((int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
+ * def fast_manhattan(array, targets, (int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
  *     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
  * 
  */
@@ -2600,7 +2622,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
   /* "npuzzle/faster_functions.pyx":26
  *     cdef int x
  * 
- *     score = fast_manhattan(target, coords)             # <<<<<<<<<<<<<<
+ *     score = fast_manhattan(None, None, target, coords)             # <<<<<<<<<<<<<<
  *     if coords[0] == target[0]:
  *         direction = 2 * (target[1] > coords[1]) - 1
  */
@@ -2624,8 +2646,8 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_3, __pyx_t_4};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
+    PyObject *__pyx_temp[5] = {__pyx_t_5, Py_None, Py_None, __pyx_t_3, __pyx_t_4};
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 4+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2634,8 +2656,8 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_3, __pyx_t_4};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
+    PyObject *__pyx_temp[5] = {__pyx_t_5, Py_None, Py_None, __pyx_t_3, __pyx_t_4};
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 4+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2643,15 +2665,21 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
   } else
   #endif
   {
-    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(4+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 26, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
     }
+    __Pyx_INCREF(Py_None);
+    __Pyx_GIVEREF(Py_None);
+    PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_6, Py_None);
+    __Pyx_INCREF(Py_None);
+    __Pyx_GIVEREF(Py_None);
+    PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, Py_None);
     __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_6, __pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_6, __pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_4);
-    PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_7, 3+__pyx_t_6, __pyx_t_4);
     __pyx_t_3 = 0;
     __pyx_t_4 = 0;
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
@@ -2665,7 +2693,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
 
   /* "npuzzle/faster_functions.pyx":27
  * 
- *     score = fast_manhattan(target, coords)
+ *     score = fast_manhattan(None, None, target, coords)
  *     if coords[0] == target[0]:             # <<<<<<<<<<<<<<
  *         direction = 2 * (target[1] > coords[1]) - 1
  *         for x in range(coords[1] + direction, target[1]):
@@ -2674,7 +2702,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
   if (__pyx_t_8) {
 
     /* "npuzzle/faster_functions.pyx":28
- *     score = fast_manhattan(target, coords)
+ *     score = fast_manhattan(None, None, target, coords)
  *     if coords[0] == target[0]:
  *         direction = 2 * (target[1] > coords[1]) - 1             # <<<<<<<<<<<<<<
  *         for x in range(coords[1] + direction, target[1]):
@@ -2687,7 +2715,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
  *         direction = 2 * (target[1] > coords[1]) - 1
  *         for x in range(coords[1] + direction, target[1]):             # <<<<<<<<<<<<<<
  *             if targets[array[coords[0], x]][0] == target[0]:
- *                return score + 1
+ *                return score + 2
  */
     __pyx_t_6 = __pyx_v_target.f1;
     __pyx_t_9 = __pyx_t_6;
@@ -2698,7 +2726,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
  *         direction = 2 * (target[1] > coords[1]) - 1
  *         for x in range(coords[1] + direction, target[1]):
  *             if targets[array[coords[0], x]][0] == target[0]:             # <<<<<<<<<<<<<<
- *                return score + 1
+ *                return score + 2
  *     elif coords[1] == target[1]:
  */
       __pyx_t_11 = __pyx_v_coords.f0;
@@ -2721,12 +2749,12 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
         /* "npuzzle/faster_functions.pyx":31
  *         for x in range(coords[1] + direction, target[1]):
  *             if targets[array[coords[0], x]][0] == target[0]:
- *                return score + 1             # <<<<<<<<<<<<<<
+ *                return score + 2             # <<<<<<<<<<<<<<
  *     elif coords[1] == target[1]:
  *         direction = 2 * (target[0] > coords[0]) - 1
  */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_7 = __Pyx_PyInt_From_long((__pyx_v_score + 1)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 31, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyInt_From_long((__pyx_v_score + 2)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 31, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __pyx_r = __pyx_t_7;
         __pyx_t_7 = 0;
@@ -2736,7 +2764,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
  *         direction = 2 * (target[1] > coords[1]) - 1
  *         for x in range(coords[1] + direction, target[1]):
  *             if targets[array[coords[0], x]][0] == target[0]:             # <<<<<<<<<<<<<<
- *                return score + 1
+ *                return score + 2
  *     elif coords[1] == target[1]:
  */
       }
@@ -2744,7 +2772,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
 
     /* "npuzzle/faster_functions.pyx":27
  * 
- *     score = fast_manhattan(target, coords)
+ *     score = fast_manhattan(None, None, target, coords)
  *     if coords[0] == target[0]:             # <<<<<<<<<<<<<<
  *         direction = 2 * (target[1] > coords[1]) - 1
  *         for x in range(coords[1] + direction, target[1]):
@@ -2754,7 +2782,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
 
   /* "npuzzle/faster_functions.pyx":32
  *             if targets[array[coords[0], x]][0] == target[0]:
- *                return score + 1
+ *                return score + 2
  *     elif coords[1] == target[1]:             # <<<<<<<<<<<<<<
  *         direction = 2 * (target[0] > coords[0]) - 1
  *         for x in range(coords[0] + direction, target[0]):
@@ -2763,7 +2791,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
   if (__pyx_t_8) {
 
     /* "npuzzle/faster_functions.pyx":33
- *                return score + 1
+ *                return score + 2
  *     elif coords[1] == target[1]:
  *         direction = 2 * (target[0] > coords[0]) - 1             # <<<<<<<<<<<<<<
  *         for x in range(coords[0] + direction, target[0]):
@@ -2776,7 +2804,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
  *         direction = 2 * (target[0] > coords[0]) - 1
  *         for x in range(coords[0] + direction, target[0]):             # <<<<<<<<<<<<<<
  *             if targets[array[x, coords[1]]][1] == target[1]:
- *                 return score + 1
+ *                 return score + 2
  */
     __pyx_t_6 = __pyx_v_target.f0;
     __pyx_t_9 = __pyx_t_6;
@@ -2787,7 +2815,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
  *         direction = 2 * (target[0] > coords[0]) - 1
  *         for x in range(coords[0] + direction, target[0]):
  *             if targets[array[x, coords[1]]][1] == target[1]:             # <<<<<<<<<<<<<<
- *                 return score + 1
+ *                 return score + 2
  *     return score
  */
       __pyx_t_14 = __pyx_v_x;
@@ -2810,12 +2838,12 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
         /* "npuzzle/faster_functions.pyx":36
  *         for x in range(coords[0] + direction, target[0]):
  *             if targets[array[x, coords[1]]][1] == target[1]:
- *                 return score + 1             # <<<<<<<<<<<<<<
+ *                 return score + 2             # <<<<<<<<<<<<<<
  *     return score
  * 
  */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_2 = __Pyx_PyInt_From_long((__pyx_v_score + 1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyInt_From_long((__pyx_v_score + 2)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __pyx_r = __pyx_t_2;
         __pyx_t_2 = 0;
@@ -2825,7 +2853,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
  *         direction = 2 * (target[0] > coords[0]) - 1
  *         for x in range(coords[0] + direction, target[0]):
  *             if targets[array[x, coords[1]]][1] == target[1]:             # <<<<<<<<<<<<<<
- *                 return score + 1
+ *                 return score + 2
  *     return score
  */
       }
@@ -2833,7 +2861,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
 
     /* "npuzzle/faster_functions.pyx":32
  *             if targets[array[coords[0], x]][0] == target[0]:
- *                return score + 1
+ *                return score + 2
  *     elif coords[1] == target[1]:             # <<<<<<<<<<<<<<
  *         direction = 2 * (target[0] > coords[0]) - 1
  *         for x in range(coords[0] + direction, target[0]):
@@ -2843,7 +2871,7 @@ static PyObject *__pyx_pf_7npuzzle_16faster_functions_6fast_linear_conflict(CYTH
 
   /* "npuzzle/faster_functions.pyx":37
  *             if targets[array[x, coords[1]]][1] == target[1]:
- *                 return score + 1
+ *                 return score + 2
  *     return score             # <<<<<<<<<<<<<<
  * 
  * @cython.boundscheck(False)
@@ -17114,14 +17142,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "npuzzle/faster_functions.pyx":6
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
- * def fast_manhattan((int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
+ * def fast_manhattan(array, targets, (int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
  *     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
  * 
  */
-  __pyx_tuple__19 = PyTuple_Pack(2, __pyx_n_s_target, __pyx_n_s_coords); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(4, __pyx_n_s_array, __pyx_n_s_targets, __pyx_n_s_target, __pyx_n_s_coords); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_faster_functions_pyx, __pyx_n_s_fast_manhattan, 6, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_faster_functions_pyx, __pyx_n_s_fast_manhattan, 6, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 6, __pyx_L1_error)
 
   /* "npuzzle/faster_functions.pyx":11
  * @cython.boundscheck(False)
@@ -17588,7 +17616,7 @@ if (!__Pyx_RefNanny) {
   /* "npuzzle/faster_functions.pyx":6
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
- * def fast_manhattan((int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
+ * def fast_manhattan(array, targets, (int, int) target, (int, int) coords):             # <<<<<<<<<<<<<<
  *     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
  * 
  */
