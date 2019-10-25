@@ -74,6 +74,7 @@ class Solver():
     def _dispatch(self, args):
         if not args or not args.heuristic:
             self._fast_heuristic = fast_manhattan
+            return
         heuristic = args.heuristic
         if heuristic == "euclidian":
             self._fast_heuristic = fast_euclidian

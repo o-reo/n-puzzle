@@ -54,10 +54,10 @@ class TestSolving(unittest.TestCase):
     def test_slide(self):
         res = parse_array(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_1.puz'))
         sol = Solver(res)
-        arr = sol._slide_right([0, [], res, 0, 0])
-        self.assertTrue(np.array_equal(arr[1], np.array([[7, 0, 8], [3, 6, 1], [2, 5, 4]])))
-        arr = sol._slide_down([0, 0, res, 0, 0])
-        self.assertTrue(np.array_equal(arr[1], np.array([[3, 7, 8], [0, 6, 1], [2, 5, 4]])))
+        res = sol._slide_right([0, [], res, 0, 0])
+        self.assertTrue(np.array_equal(res[2], np.array([[7, 0, 8], [3, 6, 1], [2, 5, 4]])))
+        res = sol._slide_down([0, [], res[2], 0, 0])
+        self.assertTrue(np.array_equal(res[2], np.array([[7, 6, 8], [3, 0, 1], [2, 5, 4]])))
 
     def test_unsolvable(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_1.puz'), NotSolvable)
