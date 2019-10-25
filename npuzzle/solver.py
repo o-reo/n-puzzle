@@ -24,7 +24,7 @@ class Solver():
         # Compute desired state
         self._solution = self._snail()
         # Get heuristic
-        self._heuristic = self._dispatch(args)
+        self._dispatch(args)
         self._algo = self._astar if not args or args.algorithm == 'astar' else self._ida
         self._search = False if not args or args.search == "greedy" else True
         # open set is the heap of investigated states
@@ -74,21 +74,15 @@ class Solver():
     def _dispatch(self, args):
         if not args or not args.heuristic:
             self._fast_heuristic = fast_manhattan
-            return self._manhattan
         heuristic = args.heuristic
         if heuristic == "euclidian":
             self._fast_heuristic = fast_euclidian
-            return self._euclidian
         if heuristic == "manhattan":
             self._fast_heuristic = fast_manhattan
-            return self._manhattan
         if heuristic == "hamming":
             self._fast_heuristic = fast_hamming
-            return self._hamming
         if heuristic == "linear_conflict":
             self._fast_heuristic = fast_linear_conflict
-            return self._linear_conflict
-        raise InvalidHeuristic
 
     def _compute_targets(self):
         self._targets.append((-1, -1))
@@ -96,32 +90,20 @@ class Solver():
             wx, wy = map(lambda x: int(x[0]), np.where(self._solution == i))
             self._targets.append((wx, wy))
 
-    # Heuristics
-    def _euclidian(self, array, target, coords):
-        return np.sqrt((target[0] - coords[0]) ** 2 + (target[1] - coords[1]) ** 2)
-
-    def _manhattan(self, array, target, coords):
-        return fast_manhattan(target, coords)
-
-    def _hamming(self, array, target, coords):
-        return target != coords
-
-    def _linear_conflict(self, array, target, coords):
-        return fast_linear_conflict(array, self._targets, target, coords)
-
-    def _get_score(self, array):
-        score = 0
-        it = np.nditer(array, flags=['multi_index'])
-        while not it.finished:
-            target = self._targets[array[it.multi_index]]
-            if array[it.multi_index] != 0 and it.multi_index != target:
-                score += self._heuristic(array, target,
-                                         it.multi_index)
-            it.iternext()
-        return score
-
     def _get_zero(self, array):
         return [e[0] for e in np.where(array == 0)]
+
+    def slide(self, puzzle, direction):
+        puz = None
+        if direction == 0:
+            _, _, puz, _ = self._slide_left((0, [], puzzle, 0))
+        if direction == 1:
+            _, _, puz, _ = self._slide_up((0, [], puzzle, 0))
+        if direction == 2:
+            _, _, puz, _ = self._slide_right((0, [], puzzle, 0))
+        if direction == 3:
+            _, _, puz, _ = self._slide_down((0, [], puzzle, 0))
+        return puz
 
     def _slide_left(self, node):
         """
@@ -132,7 +114,6 @@ class Solver():
         new_arr[wx, wy], new_arr[wx,
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
         return (fast_get_score(new_arr, self._targets, self._fast_heuristic) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
-        # return (self._get_score(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
 
     def _slide_up(self, node):
         """
@@ -216,18 +197,6 @@ class Solver():
         else:
             raise NotSolvable
 
-    def slide(self, puzzle, direction):
-        puz = None
-        if direction == 0:
-            _, _, puz, _ = self._slide_left((0, [], puzzle, 0))
-        if direction == 1:
-            _, _, puz, _ = self._slide_up((0, [], puzzle, 0))
-        if direction == 2:
-            _, _, puz, _ = self._slide_right((0, [], puzzle, 0))
-        if direction == 3:
-            _, _, puz, _ = self._slide_down((0, [], puzzle, 0))
-        return puz
-
     def print_solution(self, solution):
         puz = self._puzzle.copy()
         print(puz)
@@ -238,9 +207,7 @@ class Solver():
 
     def solve(self):
         self._solvable()
-        # open set is the heap of investigated states
-        heapq.heappush(self._open_set, (self._get_score(
-            self._puzzle), [], self._puzzle, 0))
-        # a = self._astar(self._open_set)
+        heapq.heappush(self._open_set, (fast_get_score(
+            self._puzzle, self._targets, self._fast_heuristic), [], self._puzzle, 0))
         a = self._algo(self._open_set)
         return a

@@ -3,7 +3,7 @@ import numpy as np
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def fast_manhattan((int, int) target, (int, int) coords):
+def fast_manhattan(array, targets, (int, int) target, (int, int) coords):
     return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
 
 @cython.boundscheck(False)
@@ -23,7 +23,7 @@ def fast_linear_conflict(long [:, ::1] array, targets, (int, int) target, (int, 
     cdef int direction
     cdef int x
 
-    score = fast_manhattan(target, coords)
+    score = fast_manhattan(None, None, target, coords)
     if coords[0] == target[0]:
         direction = 2 * (target[1] > coords[1]) - 1
         for x in range(coords[1] + direction, target[1]):
