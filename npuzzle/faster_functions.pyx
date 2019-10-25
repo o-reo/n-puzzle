@@ -28,12 +28,12 @@ def fast_linear_conflict(long [:, ::1] array, targets, (int, int) target, (int, 
         direction = 2 * (target[1] > coords[1]) - 1
         for x in range(coords[1] + direction, target[1]):
             if targets[array[coords[0], x]][0] == target[0]:
-               return score + 1
+               return score + 2
     elif coords[1] == target[1]:
         direction = 2 * (target[0] > coords[0]) - 1
         for x in range(coords[0] + direction, target[0]):
             if targets[array[x, coords[1]]][1] == target[1]:
-                return score + 1
+                return score + 2
     return score
 
 @cython.boundscheck(False)

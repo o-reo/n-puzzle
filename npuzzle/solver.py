@@ -25,6 +25,7 @@ class Solver():
         self._solution = self._snail()
         # Get heuristic
         self._heuristic = self._dispatch(args)
+        self._algo = self._astar if not args or args.algorithm == 'astar' else self._ida
         self._search = False if not args or args.search == "greedy" else True
         # open set is the heap of investigated states
         self._open_set = []
@@ -130,7 +131,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
-        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets, self._fast_heuristic) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
         # return (self._get_score(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
 
     def _slide_up(self, node):
@@ -141,7 +142,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx - 1,
                                  wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
-        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets,  self._fast_heuristic) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
 
     def _slide_right(self, node):
         """
@@ -151,7 +152,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
-        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets,  self._fast_heuristic) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
 
     def _slide_down(self, node):
         """
@@ -161,7 +162,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx + 1,
                                  wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
-        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets,  self._fast_heuristic) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
 
     def _astar(self, heap):
         max_state = 0
@@ -183,6 +184,35 @@ class Solver():
                 heapq.heappush(self._open_set, self._slide_up(node))
             if (wx < self._size - 1):
                 heapq.heappush(self._open_set, self._slide_down(node))
+        else:
+            raise NotSolvable
+
+    def _ida(self, heap):
+        max_state = 0
+        depth_heap = None
+        depth = fast_get_score(self._puzzle, self._targets, self._fast_heuristic)
+        while True:
+            min_cost = 10000
+            del depth_heap
+            depth_heap = heap.copy()
+            while len(depth_heap):
+                max_state = max(max_state, len(depth_heap))
+                node = heapq.heappop(depth_heap)
+                if np.all(self._solution == node[2]):
+                    return (node, max_state, len(depth_heap))
+                if node[0] > depth:
+                    min_cost = node[0] if node[0] < min_cost else min_cost
+                    continue
+                wx, wy = self._get_zero(node[2])
+                if (wy > 0):
+                    heapq.heappush(depth_heap, self._slide_left(node))
+                if (wy < self._size - 1):
+                    heapq.heappush(depth_heap, self._slide_right(node))
+                if (wx > 0):
+                    heapq.heappush(depth_heap, self._slide_up(node))
+                if (wx < self._size - 1):
+                    heapq.heappush(depth_heap, self._slide_down(node))
+            depth += 1
         else:
             raise NotSolvable
 
@@ -211,5 +241,6 @@ class Solver():
         # open set is the heap of investigated states
         heapq.heappush(self._open_set, (self._get_score(
             self._puzzle), [], self._puzzle, 0))
-        a = self._astar(self._open_set)
+        # a = self._astar(self._open_set)
+        a = self._algo(self._open_set)
         return a
