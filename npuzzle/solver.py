@@ -4,15 +4,16 @@ import sys
 import os
 import numpy as np
 import heapq
+from .faster_functions import fast_manhattan, fast_linear_conflict, fast_euclidian, fast_hamming, fast_get_score
 
 from .exception import NotSolvable, InvalidHeuristic
 from .parser import Parser
 
 
 class Solver():
-    def __init__(self, puzzle, args):
+    def __init__(self, puzzle, args = None):
         """
-            Score computation examples    
+            Score computation examples
             self._score_max(self._solution, self._hamming)
             self._score_sum(self._puzzle, self._hamming)
             self._score_sum(self._puzzle, self._linear_conflict)
@@ -24,7 +25,7 @@ class Solver():
         self._solution = self._snail()
         # Get heuristic
         self._heuristic = self._dispatch(args)
-        self._search = 0 if args.search == "greedy" else 1
+        self._search = False if not args or args.search == "greedy" else True
         # open set is the heap of investigated states
         self._open_set = []
         # closed is a simple list
@@ -70,14 +71,21 @@ class Solver():
             raise NotSolvable
 
     def _dispatch(self, args):
+        if not args or not args.heuristic:
+            self._fast_heuristic = fast_manhattan
+            return self._manhattan
         heuristic = args.heuristic
         if heuristic == "euclidian":
+            self._fast_heuristic = fast_euclidian
             return self._euclidian
         if heuristic == "manhattan":
+            self._fast_heuristic = fast_manhattan
             return self._manhattan
         if heuristic == "hamming":
+            self._fast_heuristic = fast_hamming
             return self._hamming
         if heuristic == "linear_conflict":
+            self._fast_heuristic = fast_linear_conflict
             return self._linear_conflict
         raise InvalidHeuristic
 
@@ -92,24 +100,13 @@ class Solver():
         return np.sqrt((target[0] - coords[0]) ** 2 + (target[1] - coords[1]) ** 2)
 
     def _manhattan(self, array, target, coords):
-        return abs(target[0] - coords[0]) + abs(target[1] - coords[1])
+        return fast_manhattan(target, coords)
 
     def _hamming(self, array, target, coords):
         return target != coords
 
     def _linear_conflict(self, array, target, coords):
-        score = self._manhattan(array, target, coords)
-        if coords[0] == target[0]:
-            direction = 2 * (target[1] < coords[1]) - 1
-            for x in range(coords[1] + direction, target[1]):
-                if self._targets[array[coords[0], x]][0] == target[0]:
-                    return score + 1
-        elif coords[1] == target[1]:
-            direction = 2 * (target[0] < coords[0]) - 1
-            for x in range(coords[0] + direction, target[0]):
-                if self._targets[array[x, coords[1]]][1] == target[1]:
-                    return score + 1
-        return score
+        return fast_linear_conflict(array, self._targets, target, coords)
 
     def _get_score(self, array):
         score = 0
@@ -133,7 +130,8 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy - 1] = new_arr[wx, wy - 1], new_arr[wx, wy]
-        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
+        # return (self._get_score(new_arr) + node[3] * self._search, node[1] + [0], new_arr, node[3] + 1)
 
     def _slide_up(self, node):
         """
@@ -143,7 +141,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx - 1,
                                  wy] = new_arr[wx - 1, wy], new_arr[wx, wy]
-        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [1], new_arr, node[3] + 1)
 
     def _slide_right(self, node):
         """
@@ -153,7 +151,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx,
                                  wy + 1] = new_arr[wx, wy + 1], new_arr[wx, wy]
-        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [2], new_arr, node[3] + 1)
 
     def _slide_down(self, node):
         """
@@ -163,7 +161,7 @@ class Solver():
         new_arr = node[2].copy()
         new_arr[wx, wy], new_arr[wx + 1,
                                  wy] = new_arr[wx + 1, wy], new_arr[wx, wy]
-        return (self._get_score(new_arr) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
+        return (fast_get_score(new_arr, self._targets, fast_linear_conflict) + node[3] * self._search, node[1] + [3], new_arr, node[3] + 1)
 
     def _astar(self, heap):
         max_state = 0

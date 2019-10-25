@@ -51,7 +51,7 @@ class PuzzleInterface(arcade.Window):
             img = Image.open(self.image)
             img = img.crop((max(0, img.width - img.height) // 2, max(0, img.height - img.width) // 2, min(img.height, img.width), min(img.height, img.width)))
             image_width = WINDOW_WIDTH - 2 * WINDOW_MARGIN if img.height > img.width else img.width // img.height * (WINDOW_HEIGHT - 2 * WINDOW_MARGIN)
-            image_height = img.height / img.width * (WINDOW_WIDTH - 2 * WINDOW_MARGIN) if img.height > img.width else WINDOW_HEIGHT - 2 * WINDOW_MARGIN
+            image_height = img.height // img.width * (WINDOW_WIDTH - 2 * WINDOW_MARGIN) if img.height > img.width else WINDOW_HEIGHT - 2 * WINDOW_MARGIN
             img = img.resize((image_width, image_height))
             for i in range(1, self.size ** 2):
                 wsx, wsy = map(lambda x: x[0], np.where(self.solver._solution == i))
@@ -84,7 +84,7 @@ class PuzzleInterface(arcade.Window):
             if self.puzzle[it.multi_index] == self.solver._solution[it.multi_index]:
                 piece.color = arcade.color.WHITE if self.image else arcade.color.ROYAL_BLUE
             else:
-                piece.color = arcade.color.LIGHT_STEEL_BLUE if self.image else arcade.color.WHITE   
+                piece.color = arcade.color.LIGHT_STEEL_BLUE if self.image else arcade.color.WHITE
             if piece.center_x != w_coords[0]:
                 piece.change_x = min(abs(piece.center_x - w_coords[0]), self.speed) * (2 * (piece.center_x < w_coords[0]) - 1)
                 return
@@ -114,9 +114,9 @@ class PuzzleInterface(arcade.Window):
         if direction == 3:
             self.puzzle[wx, wy], self.puzzle[wx + 1,
                                  wy] = self.puzzle[wx + 1, wy], self.puzzle[wx, wy]
-    
+
     def _draw_coordinates(self, coords):
-        return (WINDOW_MARGIN + coords[1] * self.piece_size + 
+        return (WINDOW_MARGIN + coords[1] * self.piece_size +
                 self.piece_size // 2, WINDOW_HEIGHT - (WINDOW_MARGIN + coords[0] * self.piece_size + self.piece_size // 2))
 
     def on_key_press(self, key, modifiers):
@@ -133,7 +133,7 @@ class PuzzleInterface(arcade.Window):
             self._init_pieces()
         if key == arcade.key.ESCAPE:
             arcade.close_window()
-    
+
     def update(self, delta_time):
         if self.pause:
             return
