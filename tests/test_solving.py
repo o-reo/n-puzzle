@@ -83,6 +83,15 @@ class TestSolving(unittest.TestCase):
         print("Average max state opened:", tot_max_state / 99)
         os.system("rm test.puzz")
 
+#    def test_solvable(self):
+#        for i in range(1, 6):
+#            with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_{}.puz'.format(i))) as input_file:
+#                parse = Parser()
+#                while parse.push(input_file.readline()):
+#                    pass
+#                solver = Solver(None)
+#                is_solved = solver.solve(parse)
+#                self.assertTrue(is_solved and solver.n_moves < 155)
 
     def test_unsolvable(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_1.puz'), NotSolvable)

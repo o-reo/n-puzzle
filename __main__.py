@@ -7,6 +7,8 @@ import cProfile
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--algorithm", "-a", type=str,
+                        help="algorithm to use", default="astar")
     parser.add_argument("--heuristic", "-H", type=str,
                         help="heuristic to use", default="manhattan")
     parser.add_argument("--search", "-s", type=str,
