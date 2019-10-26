@@ -5,6 +5,7 @@ import sys
 import unittest
 import numpy as np
 import time
+import subprocess
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -107,16 +108,15 @@ class TestSolving(unittest.TestCase):
         print()
         tot_time, tot_max_state, tot_state, tot_move = 0, 0, 0, 0
         for i in range(1, 100):
-            os.system("python resources/res_npuzzle-gen.py -s 3 > test.puzz")
-            with open('test.puzz') as input_file:
-                parser = Parser()
-                lines = input_file.readlines()
-                for line in lines:
-                    parser.push(line)
-                actual_time = time.time()
-                solver = Solver(parser.numpize())
-                temp = solver.solve()
-                end_time = time.time()
+            lines = subprocess.check_output(['python2', 'resources/res_npuzzle-gen.py', '-s', '3']).decode('utf-8')
+            lines = [line if line else '#' for line in lines.split('\n')]
+            parser = Parser()
+            for line in lines:
+                parser.push(line)
+            actual_time = time.time()
+            solver = Solver(parser.numpize())
+            temp = solver.solve()
+            end_time = time.time()
             tot_move += len(temp[0][1])
             tot_max_state += temp[1]
             tot_state += temp[2]
@@ -126,4 +126,3 @@ class TestSolving(unittest.TestCase):
         print("Average time spent :", tot_time / 99)
         print("Average state opened:", tot_state / 99)
         print("Average max state opened:", tot_max_state / 99)
-        os.system("rm test.puzz")
