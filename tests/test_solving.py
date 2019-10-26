@@ -4,6 +4,7 @@ import os
 import sys
 import unittest
 import numpy as np
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -25,6 +26,7 @@ def try_error(file_name, error_code):
         try:
             parser.build()
             solver = Solver(parser.numpize())
+            solver.solve()
         except error_code:
             return True
         except Exception as e:
@@ -42,22 +44,13 @@ def parse_array(file_name):
 
 class TestSolving(unittest.TestCase):
 
-#    def test_solvable(self):
-#        for i in range(1, 6):
-#            with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_{}.puz'.format(i))) as input_file:
-#                parse = Parser()
-#                while parse.push(input_file.readline()):
-#                    pass
-#                solver = Solver(None)
-#                is_solved = solver.solve(parse)
-#                self.assertTrue(is_solved and solver.n_moves < 155)
     def test_slide(self):
         res = parse_array(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_1.puz'))
         sol = Solver(res)
-        res = sol._slide_right([0, [], res, 0, 0])
-        self.assertTrue(np.array_equal(res[2], np.array([[7, 0, 8], [3, 6, 1], [2, 5, 4]])))
-        res = sol._slide_down([0, [], res[2], 0, 0])
-        self.assertTrue(np.array_equal(res[2], np.array([[7, 6, 8], [3, 0, 1], [2, 5, 4]])))
+        res = sol._slide_left([0, [], res, 0, 0])
+        self.assertTrue(np.array_equal(res[2], np.array([[7, 8, 3], [4, 1, 5], [2, 0, 6]])))
+        res = sol._slide_up([0, [], res[2], 0, 0])
+        self.assertTrue(np.array_equal(res[2], np.array([[7, 8, 3], [4, 0, 5], [2, 1, 6]])))
 
     def test_unsolvable(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_1.puz'), NotSolvable)
@@ -86,3 +79,51 @@ class TestSolving(unittest.TestCase):
     def test_unsolvable7(self):
         res = try_error(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/u_7.puz'), NotSolvable)
         self.assertTrue(res)
+
+    def test_solvable_stored(self):
+        print()
+        tot_time, tot_max_state, tot_state, tot_move = 0, 0, 0, 0
+        for i in range(1, 100):
+            with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'puzzles/s_{}.puz'.format(i))) as input_file:
+                parser = Parser()
+                lines = input_file.readlines()
+                for line in lines:
+                    parser.push(line)
+                actual_time = time.time()
+                solver = Solver(parser.numpize())
+                temp = solver.solve()
+                end_time = time.time()
+            tot_move += len(temp[0][1])
+            tot_max_state += temp[1]
+            tot_state += temp[2]
+            tot_time += (end_time - actual_time)
+        print("On stored puzzle :")
+        print("Average move", tot_move / 99)
+        print("Average time spent :", tot_time / 99)
+        print("Average state opened:", tot_state / 99)
+        print("Average max state opened:", tot_max_state / 99)
+
+    def test_solvable_random(self):
+        print()
+        tot_time, tot_max_state, tot_state, tot_move = 0, 0, 0, 0
+        for i in range(1, 100):
+            os.system("python resources/res_npuzzle-gen.py -s 3 > test.puzz")
+            with open('test.puzz') as input_file:
+                parser = Parser()
+                lines = input_file.readlines()
+                for line in lines:
+                    parser.push(line)
+                actual_time = time.time()
+                solver = Solver(parser.numpize())
+                temp = solver.solve()
+                end_time = time.time()
+            tot_move += len(temp[0][1])
+            tot_max_state += temp[1]
+            tot_state += temp[2]
+            tot_time += (end_time - actual_time)
+        print("On random puzzle :")
+        print("Average move", tot_move / 99)
+        print("Average time spent :", tot_time / 99)
+        print("Average state opened:", tot_state / 99)
+        print("Average max state opened:", tot_max_state / 99)
+        os.system("rm test.puzz")

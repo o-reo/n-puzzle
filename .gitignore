@@ -103,6 +103,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 tags
-*.swp
 
+*.swp
 gui/assets/p_*.png
+.vscode/
+npuzzle/*.c
+npuzzle/*.so

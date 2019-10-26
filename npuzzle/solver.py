@@ -12,12 +12,6 @@ from .parser import Parser
 
 class Solver():
     def __init__(self, puzzle, args = None):
-        """
-            Score computation examples
-            self._score_max(self._solution, self._hamming)
-            self._score_sum(self._puzzle, self._hamming)
-            self._score_sum(self._puzzle, self._linear_conflict)
-        """
         self._puzzle = puzzle.copy()
         self._size = puzzle.shape[0]
         self._size2 = self._size ** 2
@@ -26,7 +20,7 @@ class Solver():
         # Get heuristic
         self._dispatch(args)
         self._algo = self._astar if not args or args.algorithm == 'astar' else self._ida
-        self._search = False if not args or args.search == "greedy" else True
+        self._search = True if not args or args.search == "uniform" else False
         # open set is the heap of investigated states
         self._open_set = []
         # closed is a simple list
@@ -73,7 +67,7 @@ class Solver():
 
     def _dispatch(self, args):
         if not args or not args.heuristic:
-            self._fast_heuristic = fast_manhattan
+            self._fast_heuristic = fast_linear_conflict
             return
         heuristic = args.heuristic
         if heuristic == "euclidian":
