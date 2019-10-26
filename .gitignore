@@ -109,3 +109,4 @@ gui/assets/p_*.png
 .vscode/
 npuzzle/*.c
 npuzzle/*.so
+npuzzle/*.html
