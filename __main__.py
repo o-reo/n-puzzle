@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from npuzzle import Parser, Solver
+from src import Parser
+from module import puzzlesolver
 import argparse
 import cProfile
 
@@ -15,8 +16,6 @@ def get_args():
                         help="heuristic to use", default="uniform")
     parser.add_argument("--image", "-i", type=str,
                         help="image to use for the user interface", default=None)
-    parser.add_argument("--profiling", "-p",
-                        help="profiling functions", action="store_true")
     parser.add_argument("--display", "-d",
                         help="curses user interface", action="store_true")
     return parser.parse_args()
@@ -36,23 +35,15 @@ if __name__ == "__main__":
             parser.push(line)
         except EOFError:
             break
-    parser.build()
-    solver = Solver(parser, args)
-    if args.profiling:
-        # PROFILING
-        def solving():
-            a = solver.solve()
-            print_stats(a)
-        cProfile.run('solving()', sort='tottime')
-        exit()
-    a = solver.solve()
-    if args.display:
-        import arcade
-        from gui import PuzzleInterface
-        puz_ui = PuzzleInterface()
-        puz_ui.setup(solver, a, args.image)
-        arcade.run()
-        exit()
-    else:
-        print_stats(a)
-        solver.print_solution(a)
+    array = parser.build()
+    solution = puzzlesolver(array)
+    print(solution)
+    # if args.display:
+    #     import arcade
+    #     from gui import PuzzleInterface
+    #     puz_ui = PuzzleInterface()
+    #     puz_ui.setup(solution, args.image)
+    #     arcade.run()
+    #     exit()
+    # else:
+        # print_stats(a)
