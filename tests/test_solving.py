@@ -108,7 +108,7 @@ class TestSolving(unittest.TestCase):
         print()
         tot_time, tot_max_state, tot_state, tot_move = 0, 0, 0, 0
         for i in range(1, 100):
-            lines = subprocess.check_output(['python2', 'resources/res_npuzzle-gen.py', '-s', '3']).decode('utf-8')
+            lines = subprocess.check_output(['/usr/bin/python', 'resources/res_npuzzle-gen.py', '-s', '3']).decode('utf-8')
             lines = [line if line else '#' for line in lines.split('\n')]
             parser = Parser()
             for line in lines:
