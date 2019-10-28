@@ -120,6 +120,7 @@ class TestSolving(unittest.TestCase):
             tot_move += len(temp[0][1])
             tot_max_state += temp[1]
             tot_state += temp[2]
+            print(end_time - actual_time)
             tot_time += (end_time - actual_time)
         print("On random puzzle :")
         print("Average move", tot_move / 99)

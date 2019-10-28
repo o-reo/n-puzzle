@@ -37,7 +37,7 @@ if __name__ == "__main__":
         except EOFError:
             break
     parser.build()
-    solver = Solver(parser.numpize(), args)
+    solver = Solver(parser, args)
     if args.profiling:
         # PROFILING
         def solving():

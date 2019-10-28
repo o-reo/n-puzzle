@@ -9,7 +9,6 @@ from .faster_functions import fast_manhattan, fast_linear_conflict, fast_euclidi
 from .exception import NotSolvable, InvalidHeuristic
 from .parser import Parser
 
-
 class Solver():
     def __init__(self, puzzle, args = None):
         self._puzzle = puzzle.copy()
@@ -26,7 +25,7 @@ class Solver():
         # closed is a simple list
         self._closed_set = set()
         # compute desired locations of the pieces
-        self._targets = []
+        self._targets = np.array([])
         self._compute_targets()
         # to print directions
         self._directions = ['left', 'up', 'right', 'down']
@@ -80,10 +79,12 @@ class Solver():
             self._fast_heuristic = fast_linear_conflict
 
     def _compute_targets(self):
-        self._targets.append((-1, -1))
+        targets = []
+        targets.append((-1, -1))
         for i in range(1, self._size2):
             wx, wy = map(lambda x: int(x[0]), np.where(self._solution == i))
-            self._targets.append((wx, wy))
+            targets.append((wx, wy))
+        self._targets = np.array(targets, dtype='uint8')
 
     def _get_zero(self, array):
         return [e[0] for e in np.where(array == 0)]

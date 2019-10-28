@@ -110,3 +110,4 @@ gui/assets/p_*.png
 npuzzle/*.c
 npuzzle/*.so
 npuzzle/*.html
+*.pyc
