@@ -10,9 +10,9 @@ def get_args():
     parser.add_argument("--algorithm", "-a", type=str,
                         help="algorithm to use", default="astar")
     parser.add_argument("--heuristic", "-H", type=str,
-                        help="heuristic to use", default="manhattan")
+                        help="heuristic to use", default="linear_conflict")
     parser.add_argument("--search", "-s", type=str,
-                        help="heuristic to use", default="greedy")
+                        help="heuristic to use", default="uniform")
     parser.add_argument("--image", "-i", type=str,
                         help="image to use for the user interface", default=None)
     parser.add_argument("--profiling", "-p",
