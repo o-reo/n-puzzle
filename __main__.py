@@ -37,7 +37,7 @@ if __name__ == "__main__":
             break
     array = parser.build()
     solution = puzzlesolver(array)
-    print(solution)
+    # print(solution)
     # if args.display:
     #     import arcade
     #     from gui import PuzzleInterface

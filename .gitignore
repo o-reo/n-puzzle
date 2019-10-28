@@ -107,7 +107,6 @@ tags
 *.swp
 gui/assets/p_*.png
 .vscode/
-npuzzle/*.c
-npuzzle/*.so
+module/*.so
 npuzzle/*.html
 *.pyc
