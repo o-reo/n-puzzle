@@ -4,6 +4,7 @@ import sys
 import os
 import numpy as np
 import heapq
+from collections import deque
 from .faster_functions import fast_manhattan, fast_linear_conflict, fast_euclidian, fast_hamming, fast_get_score
 
 from .exception import NotSolvable, InvalidHeuristic
@@ -164,33 +165,43 @@ class Solver():
             raise NotSolvable
 
     def _ida(self, heap):
-        max_state = 0
-        depth_heap = None
+        self._open_stack = deque([heap[0]])
         depth = fast_get_score(self._puzzle, self._targets, self._fast_heuristic)
         while True:
-            min_cost = 10000
-            del depth_heap
-            depth_heap = heap.copy()
-            while len(depth_heap):
-                max_state = max(max_state, len(depth_heap))
-                node = heapq.heappop(depth_heap)
-                if np.all(self._solution == node[2]):
-                    return (node, max_state, len(depth_heap))
-                if node[0] > depth:
-                    min_cost = node[0] if node[0] < min_cost else min_cost
-                    continue
-                wx, wy = self._get_zero(node[2])
-                if (wy > 0):
-                    heapq.heappush(depth_heap, self._slide_left(node))
-                if (wy < self._size - 1):
-                    heapq.heappush(depth_heap, self._slide_right(node))
-                if (wx > 0):
-                    heapq.heappush(depth_heap, self._slide_up(node))
-                if (wx < self._size - 1):
-                    heapq.heappush(depth_heap, self._slide_down(node))
-            depth += 1
-        else:
-            raise NotSolvable
+            res = self._ida_search(self._open_stack, depth)
+            if res:
+                return res
+            depth += self._open_stack[0][0]
+    
+    def _ida_search(self, stack, depth):
+        if (len(stack) <= 0):
+            return None
+        node = stack[0]
+        if node[0] > depth:
+            return None
+        if np.all(self._solution == node[2]):
+            return (node, len(stack), len(stack))
+        wx, wy = self._get_zero(node[2])
+        if (wy > 0):
+            stack.appendleft(self._slide_left(node))
+            res = self._ida_search(stack, depth)
+            if res:
+                return res
+        if (wy < self._size - 1):
+            stack.appendleft(self._slide_right(node))
+            res = self._ida_search(stack, depth)
+            if res:
+                return res
+        if (wx > 0):
+            stack.appendleft(self._slide_up(node))
+            res = self._ida_search(stack, depth)
+            if res:
+                return res
+        if (wx < self._size - 1):
+            stack.appendleft(self._slide_down(node))
+            res = self._ida_search(stack, depth)
+            if res:
+                return res
 
     def print_solution(self, solution):
         puz = self._puzzle.copy()
