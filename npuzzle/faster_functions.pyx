@@ -40,13 +40,18 @@ def fast_linear_conflict(long [:, ::1] array, targets, (int, int) target, (int, 
 @cython.wraparound(False)
 def fast_get_score(array, targets, heuristic):
     cdef int score
+    cdef (int, int) target
+    cdef (int, int) index
+    cdef long[:, ::1] narray
 
     score = 0
+    narray = array
     it = np.nditer(array, flags=['multi_index'])
     while not it.finished:
-        target = targets[array[it.multi_index]]
-        if array[it.multi_index] != 0 and it.multi_index != target:
-            score += heuristic(array, targets, target,
-                                    it.multi_index)
+        index = it.multi_index
+        target = targets[narray[index[0], index[1]]]
+        if narray[index[0], index[1]] != 0 and index != target:
+            score += heuristic(narray, targets, target,
+                                    index)
         it.iternext()
     return score
