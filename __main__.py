@@ -19,12 +19,14 @@ def get_args():
                         help="profiling functions", action="store_true")
     parser.add_argument("--display", "-d",
                         help="curses user interface", action="store_true")
+    parser.add_argument("--list", '-l',
+                        help="Print the list of moves and states", action="store_true")
     return parser.parse_args()
 
 def print_stats(sol):
     print("Coups : {}".format(len(sol[0][1])))
     print("Etats simultanés : {}".format(sol[1]))
-    print("Etats ouverts : {}".format(sol[2]))
+    print("Etats explorés : {}".format(sol[2]))
 
 if __name__ == "__main__":
     args = get_args()
@@ -55,4 +57,5 @@ if __name__ == "__main__":
         exit()
     else:
         print_stats(a)
-        solver.print_solution(a)
+        if args.list:
+            solver.print_solution(a)

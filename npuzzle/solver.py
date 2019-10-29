@@ -146,7 +146,7 @@ class Solver():
             max_state = max(max_state, len(heap))
             node = heapq.heappop(heap)
             if np.all(self._solution == node[2]):
-                return (node, max_state, len(heap) + len(self._closed_set))
+                return (node, max_state, 1 + len(self._closed_set))
             a = len(self._closed_set)
             self._closed_set.add(node[2].tostring())
             if a == len(self._closed_set):
