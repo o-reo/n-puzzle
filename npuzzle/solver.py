@@ -165,43 +165,56 @@ class Solver():
             raise NotSolvable
 
     def _ida(self, heap):
+        self.current_states = 0
+        n_states = 0
+        max_states = 0
+        self._search = True
         self._open_stack = deque([heap[0]])
-        depth = fast_get_score(self._puzzle, self._targets, self._fast_heuristic)
+        depth = heap[0][0]
         while True:
-            res = self._ida_search(self._open_stack, depth)
+            self.current_states = 0
+            res = self._ida_search(depth)
             if res:
-                return res
-            depth += self._open_stack[0][0]
+                return (res, max_states, n_states)
+            n_states += self.current_states
+            max_states = max(max_states, self.current_states)
+            depth += 1
     
-    def _ida_search(self, stack, depth):
-        if (len(stack) <= 0):
+    def _ida_search(self, depth):
+        self.current_states += 1
+        if len(self._open_stack) <= 0:
             return None
-        node = stack[0]
+        node = self._open_stack[0]
         if node[0] > depth:
             return None
         if np.all(self._solution == node[2]):
-            return (node, len(stack), len(stack))
+            return node
         wx, wy = self._get_zero(node[2])
         if (wy > 0):
-            stack.appendleft(self._slide_left(node))
-            res = self._ida_search(stack, depth)
+            self._open_stack.appendleft(self._slide_left(node))
+            res = self._ida_search(depth)
             if res:
                 return res
+            self._open_stack.popleft()
         if (wy < self._size - 1):
-            stack.appendleft(self._slide_right(node))
-            res = self._ida_search(stack, depth)
+            self._open_stack.appendleft(self._slide_right(node))
+            res = self._ida_search(depth)
             if res:
                 return res
+            self._open_stack.popleft()
         if (wx > 0):
-            stack.appendleft(self._slide_up(node))
-            res = self._ida_search(stack, depth)
+            self._open_stack.appendleft(self._slide_up(node))
+            res = self._ida_search(depth)
             if res:
                 return res
+            self._open_stack.popleft()
         if (wx < self._size - 1):
-            stack.appendleft(self._slide_down(node))
-            res = self._ida_search(stack, depth)
+            self._open_stack.appendleft(self._slide_down(node))
+            res = self._ida_search(depth)
             if res:
                 return res
+            self._open_stack.popleft()
+        return None
 
     def print_solution(self, solution):
         puz = self._puzzle.copy()
